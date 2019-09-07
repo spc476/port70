@@ -99,6 +99,7 @@ handlers =
     selector  = "Gopher:Src:",
     module    = "filesystem",
     directory = "/home/spc/source/gopher-server",
+    no_access = { "^misc$" },
   },
   
   { selector = "GET"      , module = "http" },
