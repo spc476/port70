@@ -1,0 +1,41 @@
+Welcome to Conman Laboratories
+
+NOTE: RFC-1436 says this about selectors:
+
+        ... an OPAQUE selector string ...  The selector string should
+        MEAN NOTHING to the client software; it should never be
+        modified by the client.
+
+(emphasis added)
+
+The selectors on this server *ARE OPAQUE* and *MUST* be sent *AS IS*
+to the server.  Please note that the selectors here rarely start with
+a '/' character.  Particularely, phlog entries start with a selector
+of "Phlog:"---note the lack of '/' and the ending ':'.
+
+Thank you.
+  -- The Management
+
+	file	About:Server	About the server
+	file	About:Me	About the author
+	dir	Gopher:Src:	Gopher Server Source Code
+	dir	Boston:Src:	Boston source code
+	dir	CGI:Src:	CGILib source code
+	dir	phlog.gopher	The Boston Diaries Phlog Feed
+	dir	Phlog:		The Boston Diaries Phlog Archive
+	Lua	blog.last_link	Latest Phlog Post
+	dir	Bible:		The Electric King James Bible
+	dir	Movie:		The Quick and Dirty B-Movie Plot Generator
+
+	url	gopher://gopher.floodgap.com/1/world		Other Gopher Servers
+	url	gopher://i-logout.cz/1/bongusta/		Phlog aggregator
+	url	gopher://gopher.black/1/moku-pona		Another Phlog aggregator
+	url	gopher://sdf.org/1/users/julienxx/Lobste.rs	Lobste.rs mirror
+	url	gopher://sdf.org/1/users/jstg/			jstg gopher
+	url	gopher://sdf.org/1/phlogs/			phlogs
+	url	gopher://sdf.org/				some stuff
+
+Wisdom of the day:
+	Lua	@ somehow get output here
+
+	file	/robots.txt		robots.txt-because we can

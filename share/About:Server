@@ -1,0 +1,12 @@
+
+This is my own server on the Internet.  The base operating system is Linux,
+and on it, I run the following services:
+
+	HTTP	http://www.conman.org/
+	GOPHER	gopher://gopher.conman.org/
+	SMTP	sean@conman.org
+	DNS
+	QOTD
+
+I feel strongly about running my own infrastructure and maintaining control
+over my own digital data.

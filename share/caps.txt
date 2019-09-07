@@ -1,0 +1,85 @@
+CAPS
+# These four characters must be at the beginning to identify the file
+# as successfully fetched.
+
+# This is a caps file. This contains a list of key=value pairs that are
+# useful to clients wishing to query the server for special information
+# without using extensions such as Gopher+. Not all clients support caps
+# queries, so your site should be navigable without it. This is an
+# optional feature and is not currently a Gopher protocol standard.
+# Blank lines and lines starting with # are ignored.
+# Clients should cache the information where possible.
+# Some servers may automatically generate caps files for you as a pseudo
+# selector. In that case, this file may serve only to supersede the
+# machine-generated keys. You should read your server documentation.
+#
+# All keys are optional. Not all keys listed here need be specified, and
+# in fact many sites won't specify all of them. The client should be
+# prepared to deal with that too.
+
+### CAPS META PROPERTIES ###
+#
+# Spec version of this caps file. This should be the first key specified
+# so that an incompatible later format might be detected by the client.
+CapsVersion=1
+
+# This tells the client the recommended caps cache expiry time, in seconds.
+# This particular property tells the client to refetch the caps file after
+# an hour has passed, preferentially. This is optional for the client to
+# implement.
+ExpireCapsAfter=3600
+
+### PATH SECTION. USE THESE DEFAULT VALUES IF YOU ARE ON A POSIX FILESYSTEM ###
+
+# This tells the client how to cut up a selector into a breadcrumb menu.
+# This is a simple ASCII string. If it is not specified, the selector is
+# treated as if it were opaque. The client may collapse consecutive
+# delimiters (e.g., x//y is treated as x/y) except if PathParentDouble is
+# true (for Mac).
+#PathDelimeter=/
+
+# This tells the client what the "identity" path is, i.e., it can treat
+# this as a no-op, turning x/./y into x/y. If this is not specified, the
+# literal path . is used.
+#PathIdentity=.
+
+# This tells the client what the parent path is, i.e., it can treat this
+# as a path instruction to delete previous path, turning x/y/../z into x/z
+# If this is not specified, the literal path .. is used.
+#PathParent=..
+
+# This tells the client that consecutive path delimeters are treated as
+# parent (mostly for Mac HFS prior to Mac OS X), e.g., turning
+# MacHD:x:y:::z into MacHD:z. If this is not specified, it is default FALSE.
+PathParentDouble=FALSE
+
+# This tells the client the escape character for quoting the above
+# metacharacters. Most of the time this is \. If this is not specified,
+# no escape characters are used.
+#PathEscapeCharacter=\
+
+# This tells the client not to cut everything up to the first path delimeter.
+# Normally caps makes gopher://x/11/xyz into /xyz as well as gopher://x/1/xyz, 
+# assuming your server is happy with the latter URL (almost all will be).
+# If this is not specified, it is by default FALSE. This should be TRUE
+# *only* if your server requires URLs like gopher://x/0xyz.
+PathKeepPreDelimeter=TRUE
+
+### OTHER PROPERTIES ###
+#
+# Some clients will or may make use of these; some won't.
+
+ServerSoftware=GopherBlog
+ServerSoftwareVersion=0.9.0
+ServerArchitecture=Linux/Pentum
+ServerDescription=Generic Linux server
+ServerGeolocationString=Boca Raton, FL
+
+# Special server features.
+ServerSupportsStdinScripts=FALSE
+
+# An E-mail contact for the server.
+ServerAdmin=sean@conman.org
+
+# The charset used by default on this server
+ServerDefaultEncoding=UTF-8
