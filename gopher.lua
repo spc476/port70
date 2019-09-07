@@ -64,7 +64,7 @@ do
   -- -------------------------------------------------------------------------
   
   local function loadmodule(info)
-    local function notfound(base,rest,search)
+    local function notfound(_,base,rest,search)
       syslog('debug',"base=%q rest=%q search=%q",base,rest,search or "")
       return false,"Selector not found"
     end
