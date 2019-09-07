@@ -106,6 +106,7 @@ do
   
   CONF._internal = {}
   CONF._internal.addr = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
+  package.loaded['CONF'] = CONF
 end
 
 -- ************************************************************************
