@@ -136,6 +136,10 @@ local function main(ios)
   for _,handler in ipairs(CONF.handlers) do
     local base,rest = handler.selector:match(selector)
     if base then
+      if handler.module == 'http' then
+        repeat local line = ios:read("*l") until line == ""
+      end
+      
       local okay,text = handler.code.handler(handler,base,rest,search)
       
       if not okay then
