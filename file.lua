@@ -39,7 +39,12 @@ end
 -- ************************************************************************
 
 function handler(info)
-  local f = io.open(info.file,"r")
+  local f,err = io.open(info.file,"r")
+  
+  if not f then
+    return false,err
+  end
+  
   local text = f:read("*a")
   f:close()
   return true,text
