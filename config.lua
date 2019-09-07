@@ -24,7 +24,7 @@
 
 network =
 {
-  host = "example.com",
+  host = "lucy.roswell.area51",
   addr = "0.0.0.0",
   port = 7070,
 }
