@@ -39,6 +39,9 @@ no_access =
 {
   "^%.",
   "%~$",
+  "%.so$",
+  "%.o$",
+  "%.a$",
 }
 
 user =
@@ -83,6 +86,7 @@ handlers =
     selector  = "Boston:Src:",
     module    = "filesystem",
     directory = "/home/spc/source/boston",
+    no_access = { "^main$" },
   },
   
   {
