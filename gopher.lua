@@ -110,7 +110,7 @@ end
 
 -- ************************************************************************
 
-local parserequest = lpeg.C(lpeg.R" ~"^1)
+local parserequest = lpeg.C(lpeg.R" ~"^0)
                    * (lpeg.P"\t" * lpeg.C(lpeg.R" ~"^1))^-1
                    
 local function main(ios)
