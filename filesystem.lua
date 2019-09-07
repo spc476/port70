@@ -44,8 +44,6 @@ local function descend_path(path)
   local function iter(state,var)
     local n = state()
     if n then
-      assert(n ~= "..")
-      assert(n ~= ".")
       return var .. "/" .. n,n
     end
   end
