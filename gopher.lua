@@ -135,7 +135,7 @@ local function main(ios)
   for _,handler in ipairs(CONF.handlers) do
     local base,rest = handler.selector:match(selector)
     if base then
-      local okay,text = handler.code.handler(base,rest,search)
+      local okay,text = handler.code.handler(handler,base,rest,search)
       
       if not okay then
         text = string.format("3%s\tERROR\texample.com\t70\r\n",text)
