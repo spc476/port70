@@ -31,7 +31,6 @@ local io       = require "io"
 local table    = require "table"
 
 local require  = require
-local tostring = tostring
 
 magic:flags('mime')
 
