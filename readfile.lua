@@ -1,6 +1,6 @@
 -- ************************************************************************
 --
---    File handler
+--    Read a file just prior to sending it
 --    Copyright 2019 by Sean Conner.  All Rights Reserved.
 --
 --    This program is free software: you can redistribute it and/or modify
@@ -19,29 +19,39 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
--- luacheck: globals init handler
 -- luacheck: ignore 611
 
-local readfile = require "readfile"
+local mimetype = require "org.conman.parsers.mimetype"
+local magic    = require "org.conman.fsys.magic"
+local io       = require "io"
+local table    = require "table"
 
-_ENV = {}
+magic:flags('mime')
 
--- ************************************************************************
-
-function init(info)
-  if not info.file then
-    return false,"missing file specification"
+return function(filename)
+  local mime = mimetype:match(magic(filename))
+  
+  if mime.type:match "^text/" then
+    local file,err = io.open(filename,"r")
+    if not file then
+      return false,err
+    end
+    
+    local acc = {}
+    for line in file:lines() do
+      table.insert(acc,line)
+    end
+    file:close()
+    return true,table.concat(acc,"\r\n") .. "\r\n.\r\n"
+    
   else
-    return true
+    local file,err = io.open(filename,"rb")
+    if not file then
+      return false,err
+    end
+    
+    local data = file:read("*a")
+    file:close()
+    return true,data
   end
 end
-
--- ************************************************************************
-
-function handler(info)
-  return readfile(info.file)
-end
-
--- ************************************************************************
-
-return _ENV
