@@ -67,8 +67,9 @@ handlers =
   {
     selector = "Bible:",
     module   = "bible",
-    books    = "thebooks",
-    verses   = "theverses",
+    index    = "share/electric-king-james.gopher",
+    books    = "/home/spc/LINUS/docs/bible/thebooks",
+    verses   = "/home/spc/LINUS/docs/bible/books",
   },
   
   {
