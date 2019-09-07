@@ -74,6 +74,7 @@ handlers =
   {
     selector = "Movie:",
     module   = "movie",
+    config   = "/home/spc/LINUS/source/play/plotdriver/plotdriver.cnf",
   },
   
   {
