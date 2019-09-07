@@ -22,13 +22,18 @@
 -- luacheck: globals init handler
 -- luacheck: ignore 611
 
-local io = require "io"
+local mimetype = require "org.conman.parsers.mimetype"
+local magic    = require "org.conman.fsys.magic"
+local io       = require "io"
+local table    = require "table"
 
 _ENV = {}
 
 -- ************************************************************************
 
 function init(info)
+  magic:flags('mime')
+  
   if not info.file then
     return false,"missing file specification"
   else
@@ -39,15 +44,30 @@ end
 -- ************************************************************************
 
 function handler(info)
-  local f,err = io.open(info.file,"r")
+  local mime = mimetype:match(magic(info.file))
   
-  if not f then
-    return false,err
-  end
-  
-  local text = f:read("*a")
-  f:close()
-  return true,text
+  if mime.type:match "^text/" then
+    local f,err = io.open(info.file,"r")
+    if not f then
+      return false,err
+   end
+   
+   local acc = {}
+   for line in f:lines() do
+     table.insert(acc,line)
+   end
+   f:close()
+   return true,table.concat(acc,"\r\n") .. "\r\n.\r\n"
+ else
+   local f,err = io.open(info.file,"rb")
+   if not f then
+     return false,err
+   end
+   
+   local data = f:read("*a")
+   f:close()
+   return true,data
+ end
 end
 
 -- ************************************************************************
