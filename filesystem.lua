@@ -32,7 +32,6 @@ local readfile = require "readfile"
 local table    = require "table"
 local string   = require "string"
 
-local assert  = assert
 local require = require
 local ipairs  = ipairs
 
@@ -101,6 +100,7 @@ function handler(info,base,rest)
   local selector  = base
   local sep       = ""
   
+  
   for _,segment in descend_path(rest) do
     if deny(info.no_access,segment)
     or deny(CONF.no_access,segment) then
@@ -129,8 +129,6 @@ function handler(info,base,rest)
     end
   end
   
-  syslog('debug',"directory=%q",directory)
-  
   if fsys.access(directory .. "/index.gopher","r") then
     return readfile(directory .. "/index.gopher")
   elseif fsys.access(directory .. "/index.gophermap","r") then
@@ -143,10 +141,10 @@ function handler(info,base,rest)
   for file in fsys.dir(directory) do
     if  not deny(info.no_access,file)
     and not deny(CONF.no_access,file) then
-      info = fsys.stat(directory .. "/" .. file)
-      if info.mode.type == 'file' then
+      local finfo = fsys.stat(directory .. "/" .. file)
+      if finfo.mode.type == 'file' then
         table.insert(files,file)
-      elseif info.mode.type == 'dir' then
+      elseif finfo.mode.type == 'dir' then
         table.insert(directories,file)
       end
     end
@@ -158,7 +156,7 @@ function handler(info,base,rest)
   local res = {}
   
   for _,dir in ipairs(directories) do
-    table.insert(res,string.format("1%s\t%s\t%s\5%d",
+    table.insert(res,string.format("1%s\t%s\t%s\t%d",
       dir,
       selector .. sep .. dir,
       CONF.network.host,
