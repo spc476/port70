@@ -65,12 +65,16 @@ do
     CONF.network.addr = "::"
   end
   
-  if not CONF.networ,port then
+  if not CONF.network.port then
     CONF.network.port = 70
   end
   
+  CONF._internal         = {}
+  CONF._internal.addr    = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
+  package.loaded['CONF'] = CONF
+  
   if not CONF.handlers then
-    CONF.handlers = { selector = "/" , module = "filesystem" , directory = "share" }
+    CONF.handlers = { }
   end
   
   -- -------------------------------------------------------------------------
