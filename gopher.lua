@@ -46,10 +46,14 @@ do
   
   conf()
   
-  syslog.open(
-        CONF.syslog and CONF.syslog.ident    or "gopher",
-        CONF.syslog and CONF.syslog.facility or "daemon"
-  )
+  if not CONF.syslog then
+    CONF.syslog = { ident = 'gopher' , facility = 'daemon' }
+  else
+    CONF.syslog.ident    = CONF.syslog.ident    or 'gopher'
+    CONF.syslog.facility = CONF.syslog.facility or 'daemon'
+  end
+  
+  syslog.open(CONf.syslog.ident,CONF.syslog.facility)
   
   if not CONF.handlers then
     CONF.handlers = { selector = "/" , module = "filesystem" , directory = "share" }
