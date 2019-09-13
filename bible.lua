@@ -36,7 +36,7 @@ _ENV = {}
 
 -- ***********************************************************************
 
-local ABBR , BOOKS , SOUNDEX , METAPHONE, CONF do
+local ABBR , BOOKS , SOUNDEX , METAPHONE do
   local entry = lpeg.C(lpeg.R("AZ","az","09")^1)
               * lpeg.S" \t"^0 * lpeg.P"," * lpeg.S" \t"^0
               * lpeg.C(lpeg.R("AZ","az","09")^1)
@@ -46,8 +46,6 @@ local ABBR , BOOKS , SOUNDEX , METAPHONE, CONF do
   METAPHONE   = {}
   
   function init(conf)
-    CONF = conf
-    
     for line in io.lines(conf.books) do
       local abbr,book = entry:match(line)
       local s         = soundex:match(book)
@@ -132,15 +130,15 @@ end
 
 -- ***********************************************************************
 
-function handler(_,_,rest)
-  if rest == "" then
-    return readfile(CONF.index)
+function handler(conf,match)
+  if match[1] == "" then
+    return readfile(conf.index)
   end
   
-  local r = request(rest)
+  local r = request(match[1])
   
   if not r then
-    return false,string.format("%q not found",rest)
+    return false,string.format("%q not found",match[1])
   end
   
   -- ================================================
@@ -167,9 +165,9 @@ function handler(_,_,rest)
   -- ================================================
   
   local function show_chapter(chapter,low,high)
-    local index = io.open(string.format("%s/%s/%d.index",CONF.verses,r.book,chapter),"rb")
+    local index = io.open(string.format("%s/%s/%d.index",conf.verses,r.book,chapter),"rb")
     if not index then return end
-    local verse = io.open(string.format("%s/%s/%d",CONF.verses,r.book,chapter),"r")
+    local verse = io.open(string.format("%s/%s/%d",conf.verses,r.book,chapter),"r")
     local max   = math.min(high,readint(index))
     
     high = math.min(high,max)

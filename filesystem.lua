@@ -28,11 +28,11 @@ local gtypes   = require "org.conman.const.gopher-types"
 local syslog   = require "org.conman.syslog"
 local errno    = require "org.conman.errno"
 local fsys     = require "org.conman.fsys"
+local CONF     = require "CONF"
 local readfile = require "readfile"
 local table    = require "table"
 local string   = require "string"
 
-local require = require
 local ipairs  = ipairs
 
 _ENV = {}
@@ -47,7 +47,7 @@ local function descend_path(path)
     end
   end
   
-  return iter,path:gmatch("[^/]+"),"."
+  return iter,path:gmatch("[^/]*"),"."
 end
 
 -- ************************************************************************
@@ -94,14 +94,16 @@ end
 
 -- ************************************************************************
 
-function handler(info,base,rest)
-  local CONF      = require "CONF"
+function handler(info,match)
   local directory = info.directory
-  local selector  = base
+  local selector  = match[1]
   local sep       = ""
   
+  if #match == 1 then
+    table.insert(match,1,"")
+  end
   
-  for _,segment in descend_path(rest) do
+  for _,segment in descend_path(match[2]) do
     if deny(info.no_access,segment)
     or deny(CONF.no_access,segment) then
       return false,"Not found"

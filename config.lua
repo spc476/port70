@@ -31,7 +31,7 @@ network =
 
 syslog =
 {
-  ident = 'gopher',
+  ident    = 'gopher',
   facility = 'daemon',
 }
 
@@ -53,19 +53,19 @@ user =
 handlers =
 {
   {
-    selector = "/robots.txt",
+    selector = "^/robots%.txt$",
     module   = "file",
     file     = "share/robots.txt",
   },
   
   {
-    selector = "/caps.txt",
+    selector = "^/caps%.txt$",
     module   = "file",
     file     = "share/caps.txt",
   },
   
   {
-    selector = "Bible:",
+    selector = "^Bible:(.*)",
     module   = "bible",
     index    = "share/electric-king-james.gopher",
     books    = "/home/spc/LINUS/docs/bible/thebooks",
@@ -73,32 +73,32 @@ handlers =
   },
   
   {
-    selector = "Movie:",
+    selector = "^(Movie:)([%d]*)",
     module   = "movie",
     config   = "/home/spc/LINUS/source/play/plotdriver/plotdriver.cnf",
   },
-  
+  --[[
   {
-    selector = "Phlog:",
+    selector = "^Phlog:(.*)",
     module   = "blog",
-    conf     = "configure.lua",
+    config   = "/home/spc/web/boston/journal/blog.conf",
   },
-  
+  --]]
   {
-    selector  = "Boston:Src:",
+    selector  = "^(Boston:Src:)(.*)",
     module    = "filesystem",
     directory = "/home/spc/source/boston",
     no_access = { "^main$" },
   },
   
   {
-    selector  = "CGI:Src:",
+    selector  = "^(CGI:Src:)(.*)",
     module    = "filesystem",
     directory = "/home/spc/source/cgi",
   },
   
   {
-    selector  = "Gopher:Src:",
+    selector  = "^(Gopher:Src:)(.*)",
     module    = "filesystem",
     directory = "/home/spc/source/gopher-server",
     no_access = { "^misc$" },
@@ -116,8 +116,9 @@ handlers =
   { selector = "WHEN"     , module = "http" },
   
   {
-    selector  = "",
+    selector  = ".*",
     module    = "filesystem",
     directory = "share"
   },
+  --]]
 }

@@ -30,8 +30,9 @@ local io         = require "io"
 local math       = require "math"
 local string     = require "string"
 local table      = require "table"
+local CONF       = require "CONF"
+
 local ipairs     = ipairs
-local require    = require
 local tonumber   = tonumber
 
 _ENV = {}
@@ -106,9 +107,8 @@ local article = lpeg.S"BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz" / "a"
               + lpeg.P"one" / "a"
               + lpeg.Cc'an'
               
-function handler(_,base,rest)
-  local CONF       = require "CONF"
-  local seed       = randomseed(tonumber(rest))
+function handler(conf,match)
+  local seed       = randomseed(tonumber(match[2]))
   local hero       = pick_unique(FILES.males)
   local heroine    = pick_unique(FILES.females)
   local lastname   = pick_unique(FILES.family)
@@ -175,8 +175,13 @@ function handler(_,base,rest)
     end
   end
   
-  local selector = string.format("%s%u",base,seed)
-  local url      = string.format("gopher://%s%s/1%s",CONF.network.host,port,selector)
+  local selector = string.format("%s%u",match[1],seed)
+  local url      = string.format(
+  	"gopher://%s%s/1%s",
+  	CONF.network.host,
+  	port,
+  	selector
+  )
   
   append('info',"Link for this B-Movie Plot:")
   append('dir',url,selector)

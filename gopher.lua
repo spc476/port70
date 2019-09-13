@@ -86,49 +86,57 @@ do
   -- -------------------------------------------------------------------------
   
   local function loadmodule(info)
-    local function notfound(_,base,rest,search)
-      syslog('debug',"base=%q rest=%q search=%q",base,rest,search or "")
+    local function notfound()
       return false,"Selector not found"
     end
     
-    local okay,code = pcall(require,info.module)
+    if not info.selector then
+      syslog('error',"missing path field in handler")
+      info.path = ""
+      info.code = { handler = notfound }
+      return
+    end
+    
+    if not info.module then
+      syslog('error',"%s: missing module field",info.path)
+      info.code = { handler = notfound }
+      return
+    end
+    
+    local okay,mod = pcall(require,info.module)
     if not okay then
-      syslog('error',"%q %s",info.selector,code)
-      return { handler = notfound }
+      syslog('error',"%q %s",info.selector,mod)
+      info.code = { handler = notfound }
+      return
     end
     
-    if type(code) ~= 'table' then
+    if type(mod) ~= 'table' then
       syslog('error',"%q module %q not supported",info.selector,info.module)
-      return { handler = notfound }
+      info.code = { handler = notfound }
+      return
     end
     
-    if not code.handler then
+    if not mod.handler then
       syslog('error',"%q missing %s.handler()",info.selector,info.module)
-      code.handler = notfound
-      return code
+      mod.handler = notfound
+      return
     end
     
-    if code.init then
-      okay,err = code.init(info)
+    if mod.init then
+      okay,err = mod.init(info)
       if not okay then
         syslog('error',"%q %s=%s",info.selector,info.module,err)
-        code.handler = notfound
-        return code
+        mod.handler = notfound
+        return
       end
     end
     
-    return code
+    info.code = mod
   end
   
-  table.sort(CONF.handlers,function(a,b) return #a.selector > #b.selector end)
-  for _,handler in ipairs(CONF.handlers) do
-    handler.code     = loadmodule(handler)
-    handler.selector = lpeg.C(handler.selector) * lpeg.C(lpeg.R" ~"^0)
+  for _,info in ipairs(CONF.handlers) do
+    loadmodule(info)
   end
-  
-  CONF._internal = {}
-  CONF._internal.addr = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
-  package.loaded['CONF'] = CONF
 end
 
 -- ************************************************************************
@@ -137,7 +145,6 @@ local parserequest = lpeg.C(lpeg.R" ~"^0)
                    * (lpeg.P"\t" * lpeg.C(lpeg.R" ~"^1))^-1
                    
 local function main(ios)
-  syslog('debug',"connection %s",ios.__remote.addr)
   local request = ios:read("*l")
   if not request then
     local msg = "3Bad request\tERROR\texample.com\t70\r\n"
@@ -153,16 +160,15 @@ local function main(ios)
   end
   
   local selector,search = parserequest:match(request)
-  syslog('debug',"selector=%q search=%q",selector,search or "")
   
-  for _,handler in ipairs(CONF.handlers) do
-    local base,rest = handler.selector:match(selector)
-    if base then
-      if handler.module == 'http' then
+  for _,info in ipairs(CONF.handlers) do    
+    local match = table.pack(selector:match(info.selector))
+    if #match > 0 then
+      if info.module == 'http' then
         repeat local line = ios:read("*l") until line == ""
       end
       
-      local okay,text = handler.code.handler(handler,base,rest,search)
+      local okay,text = info.code.handler(info,match,search)
       
       if not okay then
         text = string.format("3%s\tERROR\texample.com\t70\r\n",text)
@@ -200,11 +206,11 @@ signal.catch('term')
 syslog('info',"entering service")
 nfl.server_eventloop(function() return signal.caught() end)
 
-for _,handler in ipairs(CONF.handlers) do
-  if handler.fini then
-    local ok,status = pcall(handler.code.fini)
+for _,info in ipairs(CONF.infos) do
+  if info.fini then
+    local ok,status = pcall(info.code.fini)
     if not ok then
-      syslog('error',"%s: %s",handler.module,status)
+      syslog('error',"%s: %s",info.module,status)
     end
   end
 end
