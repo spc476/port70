@@ -53,7 +53,21 @@ do
     CONF.syslog.facility = CONF.syslog.facility or 'daemon'
   end
   
-  syslog.open(CONf.syslog.ident,CONF.syslog.facility)
+  syslog.open(CONF.syslog.ident,CONF.syslog.facility)
+  
+  if not CONF.network
+  or not CONF.network.host then
+    syslog('critical',"%s: missing or bad network configuration",arg[1])
+    os.exit(exit.CONFIG,true)
+  end
+  
+  if not CONF.network.addr then
+    CONF.network.addr = "::"
+  end
+  
+  if not CONF.networ,port then
+    CONF.network.port = 70
+  end
   
   if not CONF.handlers then
     CONF.handlers = { selector = "/" , module = "filesystem" , directory = "share" }
