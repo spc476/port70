@@ -32,6 +32,8 @@ local io       = require "io"
 local table    = require "table"
 
 local require  = require
+local type     = type
+local ipairs   = ipairs
 
 magic:flags('mime')
 
@@ -110,7 +112,14 @@ return function(filename)
           })
         end
       elseif type == 'Lua{' then
-        table.insert(acc,execblock(filename,file))
+        local data = execblock(filename,file)
+        if type(data) == 'table' then
+          for _,line in ipairs(data) do
+            table.insert(acc,line)
+          end
+        else
+          table.insert(acc,data)
+        end
       else
         table.insert(acc,mklink {
                 type     = type,

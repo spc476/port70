@@ -121,3 +121,10 @@ handlers =
     directory = "share"
   },
 }
+
+qotd =
+{
+  quotes = "/home/spc/LINUS/quotes/quotes.txt",
+  index  = "/home/spc/.cache/quote/%2Fhome%2Fspc%2FLINUS%2Fquotes%2Fquotes.txt",
+  state  = "/home/spc/source/gopher-server/share/qotd.txt",
+}
