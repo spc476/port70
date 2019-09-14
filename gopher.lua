@@ -206,7 +206,7 @@ signal.catch('term')
 syslog('info',"entering service")
 nfl.server_eventloop(function() return signal.caught() end)
 
-for _,info in ipairs(CONF.infos) do
+for _,info in ipairs(CONF.handlers) do
   if info.fini then
     local ok,status = pcall(info.code.fini)
     if not ok then
