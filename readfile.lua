@@ -98,8 +98,8 @@ return function(filename)
     
     local acc = {}
     for line in file:lines() do
-      local type,selector,display = parseline:match(line)
-      if type == 'url' then
+      local gtype,selector,display = parseline:match(line)
+      if gtype == 'url' then
         local uri = url:match(selector)
         if uri.scheme == 'gopher' then
           uri.display = display
@@ -111,7 +111,7 @@ return function(filename)
                 selector = "URL:" .. selector
           })
         end
-      elseif type == 'Lua{' then
+      elseif gtype == 'Lua{' then
         local data = execblock(filename,file)
         if type(data) == 'table' then
           for _,line in ipairs(data) do
@@ -122,7 +122,7 @@ return function(filename)
         end
       else
         table.insert(acc,mklink {
-                type     = type,
+                type     = gtype,
                 display  = display,
                 selector = selector
         })
