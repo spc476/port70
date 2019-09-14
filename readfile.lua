@@ -114,8 +114,8 @@ return function(filename)
       elseif gtype == 'Lua{' then
         local data = execblock(filename,file)
         if type(data) == 'table' then
-          for _,line in ipairs(data) do
-            table.insert(acc,line)
+          for _,line2 in ipairs(data) do
+            table.insert(acc,line2)
           end
         else
           table.insert(acc,data)
