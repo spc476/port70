@@ -104,8 +104,8 @@ end
 -- ************************************************************************
 
 return function()
-  local amount = CONF.INDEX[CONF.NEXT + 1] - CONF.INDEX[CONF.NEXT]
-  local quote  = CONF.QUOTES:read(amount)
+  local amount = INDEX[NEXT + 1] - INDEX[NEXT]
+  local quote  = QUOTES:read(amount)
   local acc    = {}
   
   for line in quote:gmatch "[^\n]+" do
