@@ -77,7 +77,7 @@ local function execblock(name,file)
   local env   = { require = require }
   local f,err = load(code,name,"t",env)
   if not f then
-    syslog('error',"%s: $s",name,err)
+    syslog('error',"%s: %s",name,err)
     return mklink {
         type = 'info',
         display = "Nothing in particular right now"
