@@ -24,13 +24,13 @@
 local randomseed = require "org.conman.math".randomseed
 local str        = require "org.conman.string"
 local abnf       = require "org.conman.parsers.abnf"
-local gtypes     = require "org.conman.const.gopher-types"
 local lpeg       = require "lpeg"
 local io         = require "io"
 local math       = require "math"
 local string     = require "string"
 local table      = require "table"
 local CONF       = require "CONF"
+local mklink     = require "mklink"
 
 local ipairs     = ipairs
 local tonumber   = tonumber
@@ -107,7 +107,7 @@ local article = lpeg.S"BCDFGHJKLMNPQRSTVWXYZbcdfghjklmnpqrstvwxyz" / "a"
               + lpeg.P"one" / "a"
               + lpeg.Cc'an'
               
-function handler(conf,match)
+function handler(_,match)
   local seed       = randomseed(tonumber(match[2]))
   local hero       = pick_unique(FILES.males)
   local heroine    = pick_unique(FILES.females)
@@ -145,14 +145,11 @@ function handler(conf,match)
   local res    = {}
   
   local function append(type,display,selector)
-    table.insert(res,string.format(
-        "%s%s\t%s\t%s\t%d",
-        gtypes[type],
-        display,
-        selector or "",
-        CONF.network.host,
-        CONF.network.port
-    ))
+    table.insert(res,mklink {
+        type     = type,
+        display  = display,
+        selector = selector or ""
+    })
   end
   
   append('info',"")
@@ -177,10 +174,10 @@ function handler(conf,match)
   
   local selector = string.format("%s%u",match[1],seed)
   local url      = string.format(
-  	"gopher://%s%s/1%s",
-  	CONF.network.host,
-  	port,
-  	selector
+        "gopher://%s%s/1%s",
+        CONF.network.host,
+        port,
+        selector
   )
   
   append('info',"Link for this B-Movie Plot:")
