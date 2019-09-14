@@ -161,7 +161,7 @@ local function main(ios)
   
   local selector,search = parserequest:match(request)
   
-  for _,info in ipairs(CONF.handlers) do    
+  for _,info in ipairs(CONF.handlers) do
     local match = table.pack(selector:match(info.selector))
     if #match > 0 then
       if info.module == 'http' then
