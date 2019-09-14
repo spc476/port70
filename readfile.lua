@@ -21,6 +21,7 @@
 -- ************************************************************************
 -- luacheck: ignore 611
 
+local syslog   = require "org.conman.syslog"
 local mimetype = require "org.conman.parsers.mimetype"
 local magic    = require "org.conman.fsys.magic"
 local url      = require "org.conman.parsers.url.gopher"
@@ -29,6 +30,8 @@ local mklink   = require "mklink"
 local lpeg     = require "lpeg"
 local io       = require "io"
 local table    = require "table"
+
+local require  = require
 
 magic:flags('mime')
 
@@ -45,11 +48,41 @@ local parseline do
               * C(R" ~"^1) * P"\t"^1 -- selector
               * C(R" ~"^0)           -- display
               
+  local code  = P"\t"
+              * C"Lua{"              -- type
+              * Cc""                 -- selector
+              * Cc""                 -- display
+              
   local info  = Cc"info"             -- type
               * Cc""                 -- selector
               * C(R" ~"^0)           -- display
               
-  parseline = entry + info
+  parseline = entry + code + info
+end
+
+-- ************************************************************************
+
+local function execblock(name,file)
+  local acc = {}
+  
+  repeat
+    local line = file:read("*l")
+    table.insert(acc,line)
+  until line:match "}Lua"
+  
+  table.remove(acc)
+  local code  = table.concat(acc," ")
+  local env   = { require = require }
+  local f,err = load(code,name,"t",env)
+  if not f then
+    syslog('error',"%s: $s",name,err)
+    return mklink {
+        type = 'info',
+        display = "Nothing in particular right now"
+    }
+  end
+  
+  return f()
 end
 
 -- ************************************************************************
@@ -76,9 +109,8 @@ return function(filename)
                 selector = "URL:" .. selector
           })
         end
-      elseif type == 'Lua' then
-        -- XXX how to handle it
-        table.insert(acc,"iLUACODE\t-\t-\t0")
+      elseif type == 'Lua{' then
+        table.insert(acc,execblock(filename,file))
       else
         table.insert(acc,mklink {
                 type     = type,

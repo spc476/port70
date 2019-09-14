@@ -23,7 +23,13 @@ Thank you.
 	dir	CGI:Src:	CGILib source code
 	dir	phlog.gopher	The Boston Diaries Phlog Feed
 	dir	Phlog:		The Boston Diaries Phlog Archive
-	Lua	blog.last_link	Latest Phlog Post
+	Lua{
+		local mklink = require "mklink"
+		return mklink {
+			type    = 'info',
+			display = "Latest Phlog Post",
+		}
+	}Lua
 	dir	Bible:		The Electric King James Bible
 	dir	Movie:		The Quick and Dirty B-Movie Plot Generator
 
@@ -36,6 +42,12 @@ Thank you.
 	url	gopher://sdf.org/				some stuff
 
 Wisdom of the day:
-	Lua	???	somehow get output here
+	Lua{
+		local mklink = require "mklink"
+		return mklink {
+			type    = 'info',
+			display = "Hello from Lua!"
+		}
+	}Lua
 
 	file	/robots.txt		robots.txt-because we can
