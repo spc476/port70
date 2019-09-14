@@ -43,11 +43,7 @@ Thank you.
 
 Wisdom of the day:
 	Lua{
-		local mklink = require "mklink"
-		return mklink {
-			type    = 'info',
-			display = "Hello from Lua!"
-		}
+		return (require "qotd")()
 	}Lua
 
 	file	/robots.txt		robots.txt-because we can
