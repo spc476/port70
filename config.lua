@@ -120,5 +120,4 @@ handlers =
     module    = "filesystem",
     directory = "share"
   },
-  --]]
 }
