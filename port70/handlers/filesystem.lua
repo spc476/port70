@@ -37,6 +37,8 @@ local ipairs  = ipairs
 
 _ENV = {}
 
+magic:flags('mime')
+
 -- ************************************************************************
 
 local function descend_path(path)
@@ -65,7 +67,6 @@ end
 -- ************************************************************************
 
 function init(info)
-  magic:flags('mime')
   if not info.directory then
     return false,"missing directory specification"
   else
@@ -77,6 +78,12 @@ end
 
 local function gophertype(filename)
   local mime = mimetype:match(magic(filename))
+  
+  if not mime then
+    syslog('warning',"%s: no mime type",filename)
+    return gtypes.binary
+  end
+  
   if mime.type:match "^text/html" then
     return gtypes.html
   elseif mime.type:match "^text/" then
@@ -143,11 +150,13 @@ function handler(info,match)
   for file in fsys.dir(directory) do
     if  not deny(info.no_access,file)
     and not deny(CONF.no_access,file) then
-      local finfo = fsys.stat(directory .. "/" .. file)
-      if finfo.mode.type == 'file' then
-        table.insert(files,file)
-      elseif finfo.mode.type == 'dir' then
-        table.insert(directories,file)
+      local finfo,err = fsys.stat(directory .. "/" .. file)
+      if finfo then
+        if finfo.mode.type == 'file' then
+          table.insert(files,file)
+        elseif finfo.mode.type == 'dir' then
+          table.insert(directories,file)
+        end
       end
     end
   end
