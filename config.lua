@@ -66,7 +66,7 @@ handlers =
   
   {
     selector = "^Bible:(.*)",
-    module   = "bible",
+    module   = "org.conman.app.port70.handlers.bible",
     index    = "share/electric-king-james.gopher",
     books    = "/home/spc/LINUS/docs/bible/thebooks",
     verses   = "/home/spc/LINUS/docs/bible/books",
@@ -74,13 +74,13 @@ handlers =
   
   {
     selector = "^(Movie:)([%d]*)",
-    module   = "movie",
+    module   = "org.conman.app.port70.handlers.movie",
     config   = "/home/spc/LINUS/source/play/plotdriver/plotdriver.cnf",
   },
   
   {
     selector = "^Phlog:(.*)",
-    module   = "blog",
+    module   = "org.conman.app.port70.handlers.blog",
     config   = "/home/spc/web/boston/journal/blog.conf",
   },
   

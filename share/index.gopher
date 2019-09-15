@@ -25,7 +25,7 @@ Thank you.
 	dir	Phlog:		The Boston Diaries Phlog Archive
 	Lua{
 		local mklink = require "port70.mklink"
-		local blog   = require "blog"
+		local blog   = require "org.conman.app.port70.handlers.blog"
 		return mklink {
 			type     = 'file',
 			display  = "Latest Phlog Post",
@@ -46,7 +46,7 @@ Thank you.
 Wisdom of the day:
 
 	Lua{
-		return (require "qotd")()
+		return (require "org.conman.app.port70.qotd")()
 	}Lua
 
 	file	/robots.txt		robots.txt-because we can
