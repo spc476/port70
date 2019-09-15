@@ -61,3 +61,4 @@ luacheck:
 
 clean:
 	$(RM) $(shell find . -name '*~')
+	$(RM) $(shell find . -name '*.so')
