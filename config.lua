@@ -19,7 +19,7 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
--- luacheck: globals network syslog no_access user handlers
+-- luacheck: globals network syslog no_access user handlers qotd
 -- luacheck: ignore 611
 
 network =
@@ -77,13 +77,13 @@ handlers =
     module   = "movie",
     config   = "/home/spc/LINUS/source/play/plotdriver/plotdriver.cnf",
   },
-  --[[
+  
   {
     selector = "^Phlog:(.*)",
     module   = "blog",
     config   = "/home/spc/web/boston/journal/blog.conf",
   },
-  --]]
+  
   {
     selector  = "^(Boston:Src:)(.*)",
     module    = "filesystem",
