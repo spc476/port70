@@ -48,7 +48,7 @@ local parseline do
   local entry = P"\t"
               * C(R" ~"^1) * P"\t"^1 -- type
               * C(R" ~"^1) * P"\t"^1 -- selector
-              * C(R" ~"^0)           -- display
+              * C(R" \255"^0)        -- display
               
   local code  = P"\t"
               * C"Lua{"              -- type
@@ -57,7 +57,7 @@ local parseline do
               
   local info  = Cc"info"             -- type
               * Cc""                 -- selector
-              * C(R" ~"^0)           -- display
+              * C(R" \255"^0)        -- display
               
   parseline = entry + code + info
 end
@@ -134,10 +134,10 @@ return function(filename)
   end
   
   local mime = mimetype:match(magic(filename))
-  
   if mime.type:match "^text/" then
     local file,err = io.open(filename,"r")
     if not file then
+      syslog('error',"io.open(%q) = %s",filename,err)
       return false,err
     end
     
