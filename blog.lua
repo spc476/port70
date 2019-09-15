@@ -39,8 +39,8 @@ local os        = require "os"
 local table     = require "table"
 local string    = require "string"
 local coroutine = require "coroutine"
-local mklink    = require "mklink"
-local readfile  = require "readfile"
+local mklink    = require "port70.mklink"
+local readfile  = require "port70.readfile"
 
 local type      = type
 local setfenv   = setfenv

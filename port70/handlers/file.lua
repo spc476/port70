@@ -22,7 +22,7 @@
 -- luacheck: globals init handler
 -- luacheck: ignore 611
 
-local readfile = require "readfile"
+local readfile = require "port70.readfile"
 
 _ENV = {}
 

@@ -27,8 +27,8 @@ local io     = require "io"
 local os     = require "os"
 local string = require "string"
 local table  = require "table"
-local CONF   = require "CONF".qotd
-local mklink = require "mklink"
+local CONF   = require "port70.CONF".qotd
+local mklink = require "port70.mklink"
 
 _ENV = {}
 

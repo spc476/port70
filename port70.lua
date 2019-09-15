@@ -69,9 +69,9 @@ do
     CONF.network.port = 70
   end
   
-  CONF._internal         = {}
-  CONF._internal.addr    = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
-  package.loaded['CONF'] = CONF
+  CONF._internal                = {}
+  CONF._internal.addr           = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
+  package.loaded['port70.CONF'] = CONF
   
   if not CONF.handlers then
     CONF.handlers = { }

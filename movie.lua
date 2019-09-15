@@ -29,8 +29,8 @@ local io         = require "io"
 local math       = require "math"
 local string     = require "string"
 local table      = require "table"
-local CONF       = require "CONF"
-local mklink     = require "mklink"
+local CONF       = require "port70.CONF"
+local mklink     = require "port70.mklink"
 
 local ipairs     = ipairs
 local tonumber   = tonumber

@@ -24,7 +24,7 @@ Thank you.
 	dir	phlog.gopher	The Boston Diaries Phlog Feed
 	dir	Phlog:		The Boston Diaries Phlog Archive
 	Lua{
-		local mklink = require "mklink"
+		local mklink = require "port70.mklink"
 		local blog   = require "blog"
 		return mklink {
 			type     = 'file',

@@ -54,13 +54,13 @@ handlers =
 {
   {
     selector = "^/robots%.txt$",
-    module   = "file",
+    module   = "port70.handlers.file",
     file     = "share/robots.txt",
   },
   
   {
     selector = "^/caps%.txt$",
-    module   = "file",
+    module   = "port70.handlers.file",
     file     = "share/caps.txt",
   },
   
@@ -86,38 +86,38 @@ handlers =
   
   {
     selector  = "^(Boston:Src:)(.*)",
-    module    = "filesystem",
+    module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/boston",
     no_access = { "^main$" },
   },
   
   {
     selector  = "^(CGI:Src:)(.*)",
-    module    = "filesystem",
+    module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/cgi",
   },
   
   {
     selector  = "^(Gopher:Src:)(.*)",
-    module    = "filesystem",
+    module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/gopher-server",
     no_access = { "^misc$" },
   },
   
-  { selector = "GET"      , module = "http" },
-  { selector = "HEAD"     , module = "http" },
-  { selector = "PUT"      , module = "http" },
-  { selector = "DELETE"   , module = "http" },
-  { selector = "CONNECT"  , module = "http" },
-  { selector = "OPTIONS"  , module = "http" },
-  { selector = "TRACE"    , module = "http" },
-  { selector = "BREW"     , module = "http" }, -- RFC-2324, in case people get cute
-  { selector = "PROPFIND" , module = "http" },
-  { selector = "WHEN"     , module = "http" },
+  { selector = "GET"      , module = "port70.handlers.http" },
+  { selector = "HEAD"     , module = "port70.handlers.http" },
+  { selector = "PUT"      , module = "port70.handlers.http" },
+  { selector = "DELETE"   , module = "port70.handlers.http" },
+  { selector = "CONNECT"  , module = "port70.handlers.http" },
+  { selector = "OPTIONS"  , module = "port70.handlers.http" },
+  { selector = "TRACE"    , module = "port70.handlers.http" },
+  { selector = "BREW"     , module = "port70.handlers.http" }, -- RFC-2324, in case people get cute
+  { selector = "PROPFIND" , module = "port70.handlers.http" },
+  { selector = "WHEN"     , module = "port70.handlers.http" },
   
   {
     selector  = ".*",
-    module    = "filesystem",
+    module    = "port70.handlers.filesystem",
     directory = "share"
   },
 }

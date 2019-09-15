@@ -23,7 +23,7 @@
 
 local gtypes = require "org.conman.const.gopher-types"
 local string = require "string"
-local CONF   = require "CONF"
+local CONF   = require "port70.CONF"
 
 return function(info)
   return string.format(
