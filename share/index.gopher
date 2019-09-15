@@ -25,9 +25,11 @@ Thank you.
 	dir	Phlog:		The Boston Diaries Phlog Archive
 	Lua{
 		local mklink = require "mklink"
+		local blog   = require "blog"
 		return mklink {
-			type    = 'info',
-			display = "Latest Phlog Post",
+			type     = 'file',
+			display  = "Latest Phlog Post",
+			selector = blog.last_link()
 		}
 	}Lua
 	dir	Bible:		The Electric King James Bible
@@ -42,6 +44,7 @@ Thank you.
 	url	gopher://sdf.org/				some stuff
 
 Wisdom of the day:
+
 	Lua{
 		return (require "qotd")()
 	}Lua
