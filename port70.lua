@@ -139,6 +139,8 @@ do
   end
 end
 
+local mklink = require "port70.mklink"
+
 -- ************************************************************************
 
 local parserequest = lpeg.C(lpeg.R" ~"^0)
@@ -160,6 +162,8 @@ local function main(ios)
   end
   
   local selector,search = parserequest:match(request)
+  local text            = mklink { type = 'error' , display = "Selector not found" }
+  local okay            = false
   
   for _,info in ipairs(CONF.handlers) do
     local match = table.pack(selector:match(info.selector))
@@ -168,27 +172,25 @@ local function main(ios)
         repeat local line = ios:read("*l") until line == ""
       end
       
-      local okay,text = info.code.handler(info,match,search)
+      okay,text = info.code.handler(info,match,search)
       
       if not okay then
-        text = string.format("3%s\tERROR\texample.com\t70\r\n",text)
+        text = mklink{ type = 'error' , display = text }
       end
-      
-      ios:write(text)
-      syslog(
+      break
+    end
+  end
+  
+  ios:write(text)
+  syslog(
         'info',
         "remote=%s status=%s request=%q bytes=%d",
         ios.__remote.addr,
         tostring(okay),
         request,
         #text
-      )
-      ios:close()
-      return
-    end
-  end
-  
-  assert(false)
+  )
+  ios:close()
 end
 
 -- ************************************************************************
