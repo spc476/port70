@@ -20,13 +20,14 @@
 -- ***********************************************************************
 -- luacheck: ignore 611
 
-local syslog = require "org.conman.syslog"
-local signal = require "org.conman.signal"
-local nfl    = require "org.conman.nfl"
-local tcp    = require "org.conman.nfl.tcp"
-local exit   = require "org.conman.const.exit"
-local net    = require "org.conman.net"
-local lpeg   = require "lpeg"
+local syslog  = require "org.conman.syslog"
+local signal  = require "org.conman.signal"
+local nfl     = require "org.conman.nfl"
+local tcp     = require "org.conman.nfl.tcp"
+local exit    = require "org.conman.const.exit"
+local net     = require "org.conman.net"
+local lpeg    = require "lpeg"
+local setugid = require "port70.setugid"
 
 local CONF = {}
 
@@ -72,6 +73,10 @@ do
   CONF._internal                = {}
   CONF._internal.addr           = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
   package.loaded['port70.CONF'] = CONF
+
+  if not setugid(CONF.user) then
+    os.exit(exit.CONF,true)
+  end
   
   if not CONF.handlers then
     CONF.handlers = { }
