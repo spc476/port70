@@ -145,6 +145,11 @@ handlers =
   { selector = "WHEN"     , module = "port70.handlers.http" },
   
   {
+   selector = "^URL:(.*)",
+   module   = "port70.handlers.url",
+  },
+  
+  {
     selector  = ".*",
     module    = "port70.handlers.filesystem",
     directory = "share",
