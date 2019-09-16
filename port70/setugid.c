@@ -1,6 +1,6 @@
 /***************************************************************************
 *
-* Get user home directory from the system.
+* Switch userid.
 * Copyright 2019 by Sean Conner.
 *
 * This library is free software; you can redistribute it and/or modify it
@@ -22,7 +22,9 @@
 
 #include <stdbool.h>
 #include <errno.h>
+#include <string.h>
 
+#include <syslog.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <pwd.h>
@@ -33,12 +35,20 @@
 
 /*************************************************************************/
 
-static int setugiderr(lua_State *L,char const *msg)
+static inline int setugidok(lua_State *L,char const *msg)
 {
+  syslog(LOG_NOTICE,"%s",msg);
+  lua_pushboolean(L,true);
+  return 1;
+}
+
+/*************************************************************************/
+
+static inline int setugiderr(lua_State *L,char const *msg)
+{
+  syslog(LOG_ERR,"%s: %s",msg,strerror(errno));
   lua_pushboolean(L,false);
-  lua_pushinteger(L,errno);
-  lua_pushstring(L,msg);
-  return 3;
+  return 1;
 }
 
 /*************************************************************************/
@@ -50,7 +60,12 @@ static int setugid(lua_State *L)
   int   id;
   bool  fgid;
   
-  if (lua_type(L,1) == LUA_TNIL) return 0;
+  if (lua_type(L,1) == LUA_TNIL)
+    return setugidok(L,"Not electing to switch userid");
+    
+  if (getuid() != 0)
+    return setugidok(L,"Not running at root---can't switch userid");
+    
   luaL_checktype(L,1,LUA_TTABLE);
   
   id = lua_getfield(L,1,"gid");
@@ -100,9 +115,8 @@ static int setugid(lua_State *L)
     
   if (setresuid(uid,uid,uid) == -1)
     return setugiderr(L,"setresuid()");
-  
-  lua_pushboolean(L,true);
-  return 1;
+
+  return setugidok(L,"successfully switch userid");
 }
 
 /*************************************************************************/
