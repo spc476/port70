@@ -147,7 +147,8 @@ handlers =
   {
     selector  = ".*",
     module    = "port70.handlers.filesystem",
-    directory = "share"
+    directory = "share",
+    no_access =
     {
       "^%.",
       "%~$",
