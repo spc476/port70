@@ -111,8 +111,7 @@ function handler(info,match)
   end
   
   for _,segment in descend_path(match[2]) do
-    if deny(info.no_access,segment)
-    or deny(CONF.no_access,segment) then
+    if deny(info.no_access,segment) then
       return false,"Not found"
     end
     
@@ -148,9 +147,8 @@ function handler(info,match)
   local files       = {}
   
   for file in fsys.dir(directory) do
-    if  not deny(info.no_access,file)
-    and not deny(CONF.no_access,file) then
-      local finfo,err = fsys.stat(directory .. "/" .. file)
+    if not deny(info.no_access,file) then
+      local finfo = fsys.stat(directory .. "/" .. file)
       if finfo then
         if finfo.mode.type == 'file' then
           table.insert(files,file)
