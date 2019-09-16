@@ -160,7 +160,7 @@ local function main(ios)
         'info',
         "remote=%s status=false request=%q bytes=%d",
         ios.__remote.addr,
-        "nil",
+        "",
         #msg
     )
     ios:close()
