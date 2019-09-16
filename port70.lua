@@ -144,7 +144,7 @@ do
   end
 end
 
-local mklink = require "port70.mklink"
+local mklink = require "port70.mklink" -- XXX hack
 
 -- ************************************************************************
 
