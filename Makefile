@@ -57,7 +57,7 @@ endif
 all: port70/getuserdir.so
 
 luacheck:
-	luacheck *.lua
+	luacheck $(shell find . -name '*.lua')
 
 clean:
 	$(RM) $(shell find . -name '*~')
