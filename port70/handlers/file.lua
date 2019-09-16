@@ -22,14 +22,29 @@
 -- luacheck: globals init handler
 -- luacheck: ignore 611
 
+local lpeg     = require "lpeg"
 local readfile = require "port70.readfile"
 
 _ENV = {}
 
 -- ************************************************************************
 
-function init(info)
-  if not info.file then
+local extension do
+  local char = lpeg.C(lpeg.S"^$()%.[]*+-?") / "%%%1"
+             + lpeg.R" \255"
+  extension  = lpeg.Cs(char^1 * lpeg.Cc"$")
+end
+
+-- ************************************************************************
+
+function init(conf)
+  if not conf.extension then
+    conf.extension = "%.port70$"
+  else
+    conf.extension = extension:match(conf.extension)
+  end
+  
+  if not conf.file then
     return false,"missing file specification"
   else
     return true
@@ -39,7 +54,7 @@ end
 -- ************************************************************************
 
 function handler(info)
-  return readfile(info.file)
+  return readfile(info.file,info.extension)
 end
 
 -- ************************************************************************

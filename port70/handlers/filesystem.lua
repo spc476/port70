@@ -34,6 +34,7 @@ local lpeg     = require "lpeg"
 local table    = require "table"
 local string   = require "string"
 local ipairs   = ipairs
+local type     = type
 
 _ENV = {}
 magic:flags('mime')
@@ -75,11 +76,13 @@ end
 
 function init(conf)
   if not conf.index then
-    conf.index = "index.gopher"
+    conf.index = { "index.port70" , "index.gopher" }
+  elseif type(conf.index) == 'string' then
+    conf.index = { conf.index }
   end
   
   if not conf.extension then
-    conf.extension = "%.gopher$"
+    conf.extension = "%.port70$"
   else
     conf.extension = extension:match(conf.extension)
   end
@@ -148,16 +151,16 @@ function handler(info,match)
         return false,"Not found"
       end
     elseif finfo.mode.type == 'file' then
-      return readfile(directory)
+      return readfile(directory,info.extension)
     else
       return false,"Not found"
     end
   end
   
-  if fsys.access(directory .. "/index.gopher","r") then
-    return readfile(directory .. "/index.gopher")
-  elseif fsys.access(directory .. "/index.gophermap","r") then
-    return readfile(directory .. "/index.gophermap")
+  for _,index in ipairs(info.index) do
+    if fsys.access(directory .. "/" .. index,"r") then
+      return readfile(directory .. "/" .. index,info.extension)
+    end
   end
   
   local directories = {}
@@ -191,9 +194,9 @@ function handler(info,match)
   end
   
   for _,file in ipairs(files) do
-    local type = gophertype(directory .. "/" .. file)
+    local gtype = gophertype(directory .. "/" .. file)
     table.insert(res,string.format("%s%s\t%s\t%s\t%d",
-      type,
+      gtype,
       file,
       selector .. sep .. file,
       CONF.network.host,

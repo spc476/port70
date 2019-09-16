@@ -89,8 +89,8 @@ end
 
 -- ************************************************************************
 
-return function(filename)
-  if filename:match "%.gopher$" then
+return function(filename,ext)
+  if filename:match(ext) then
     local file,err = io.open(filename,"r")
     if not file then
       return false,err
