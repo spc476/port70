@@ -56,11 +56,12 @@ handlers =
   },
   
   {
-    selector = "^Bible:(.*)",
-    module   = "org.conman.app.port70.handlers.bible",
-    index    = "share/electric-king-james.gopher",
-    books    = "/home/spc/LINUS/docs/bible/thebooks",
-    verses   = "/home/spc/LINUS/docs/bible/books",
+    selector  = "^Bible:(.*)",
+    module    = "org.conman.app.port70.handlers.bible",
+    index     = "share/electric-king-james.port70",
+    extension = "%.port70$",
+    books     = "/home/spc/LINUS/docs/bible/thebooks",
+    verses    = "/home/spc/LINUS/docs/bible/books",
   },
   
   {
