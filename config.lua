@@ -35,15 +35,6 @@ syslog =
   facility = 'daemon',
 }
 
-no_access =
-{
-  "^%.",
-  "%~$",
-  "%.so$",
-  "%.o$",
-  "%.a$",
-}
-
 user =
 {
   uid = 'gopher',
@@ -88,27 +79,58 @@ handlers =
     selector  = "^(Boston:Src:)(.*)",
     module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/boston",
-    no_access = { "^main$" },
+    no_access =
+    {
+      "^%.",
+      "%~$",
+      "%.so$",
+      "%.o$",
+      "%.a$",
+      "^main$"
+    },
   },
   
   {
     selector  = "^(CGI:Src:)(.*)",
     module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/cgi",
+    no_access =
+    {
+      "^%.",
+      "%~$",
+      "%.so$",
+      "%.o$",
+      "%.a$",
+    },
   },
   
   {
     selector  = "^(Gopher:Src:)(.*)",
     module    = "port70.handlers.filesystem",
     directory = "/home/spc/source/gopher-server",
-    no_access = { "^misc$" },
+    no_access =
+    {
+      "^%.",
+      "%~$",
+      "%.so$",
+      "%.o$",
+      "%.a$",
+      "^misc$"
+    },
   },
   
   {
     selector  = "^(Users:)([^/]+)(.*)",
     module    = "port70.handlers.userdir",
     directory = "public_html",
-    no_access = {},
+    no_access =
+    {
+      "^%.",
+      "%~$",
+      "%.so$",
+      "%.o$",
+      "%.a$",
+    },
   },
   
   { selector = "GET"      , module = "port70.handlers.http" },
@@ -126,6 +148,10 @@ handlers =
     selector  = ".*",
     module    = "port70.handlers.filesystem",
     directory = "share"
+    {
+      "^%.",
+      "%~$",
+    },
   },
 }
 
