@@ -23,7 +23,7 @@ CC      = gcc -std=c99
 CFLAGS  = -g -Wall -Wextra -pedantic
 LDFLAGS = -g -shared
 
-override CFLAGS += -fPIC
+override CFLAGS += -fPIC -D_GNU_SOURCE
 
 INSTALL         = /usr/bin/install
 INSTALL_PROGRAM = $(INSTALL)
@@ -54,7 +54,7 @@ endif
 
 .PHONY: all luacheck clean
 
-all: port70/getuserdir.so
+all: port70/getuserdir.so port70/setugid.so
 
 luacheck:
 	luacheck $(shell find . -name '*.lua')
