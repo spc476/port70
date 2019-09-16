@@ -154,8 +154,6 @@ local parserequest = lpeg.C(lpeg.R" ~"^0)
 local function main(ios)
   local request = ios:read("*l")
   if not request then
-    local msg = "3Bad request\tERROR\texample.com\t70\r\n"
-    ios:write(msg)
     syslog(
         'info',
         "remote=%s status=false request=%q bytes=%d",
