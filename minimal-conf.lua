@@ -19,8 +19,9 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
+-- luacheck: globals network handlers
 
-network = 
+network =
 {
   host = "example.com",
 }
