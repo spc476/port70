@@ -153,6 +153,8 @@ handlers =
     selector  = ".*",
     module    = "port70.handlers.filesystem",
     directory = "share",
+    index     = { "index.port70" , "index.gopher" , "index.gophermap" },
+    extension = ".port70",
     no_access =
     {
       "^%.",
