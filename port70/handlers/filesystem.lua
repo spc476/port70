@@ -30,13 +30,12 @@ local errno    = require "org.conman.errno"
 local fsys     = require "org.conman.fsys"
 local CONF     = require "port70.CONF"
 local readfile = require "port70.readfile"
+local lpeg     = require "lpeg"
 local table    = require "table"
 local string   = require "string"
-
-local ipairs  = ipairs
+local ipairs   = ipairs
 
 _ENV = {}
-
 magic:flags('mime')
 
 -- ************************************************************************
@@ -66,12 +65,30 @@ end
 
 -- ************************************************************************
 
-function init(info)
-  if not info.directory then
-    return false,"missing directory specification"
-  else
-    return true
+local extension do
+  local char = lpeg.C(lpeg.S"^$()%.[]*+-?") / "%%%1"
+             + lpeg.R" \255"
+  extension  = lpeg.Cs(char^1 * lpeg.Cc"$")
+end
+
+-- ************************************************************************
+
+function init(conf)
+  if not conf.index then
+    conf.index = "index.gopher"
   end
+  
+  if not conf.extension then
+    conf.extension = "%.gopher$"
+  else
+    conf.extension = extension:match(conf.extension)
+  end
+  
+  if not conf.no_access then
+    conf.no_access = { "%." }
+  end
+  
+  return true
 end
 
 -- ************************************************************************
