@@ -127,7 +127,7 @@ handlers =
   { selector = "WHEN"     , module = "port70.handlers.http" },
   
   -- ---------------------------------------------------------------------
-  -- URL handler.  If a gopher client doesn't understand the URL: marker 
+  -- URL handler.  If a gopher client doesn't understand the URL: marker
   -- of the 'h' type, use this to send back an HTML page with a redirect
   -- to the given URL.
   -- ---------------------------------------------------------------------
@@ -138,7 +138,7 @@ handlers =
   },
   
   -- --------------------------------------------------------------------
-  -- The filesystem handler.  You will most likely want to use this one. 
+  -- The filesystem handler.  You will most likely want to use this one.
   -- You are not restricted to a single instance of this.  The first example
   -- sets up a hypthetical source of tarballs, while the second example will
   -- serve up all other selectors that haven't matched by a file.

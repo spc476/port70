@@ -71,9 +71,11 @@ handlers =
   },
   
   {
-    selector = "^Phlog:(.*)",
-    module   = "org.conman.app.port70.handlers.blog",
-    config   = "/home/spc/web/boston/journal/blog.conf",
+    selector  = "^Phlog:(.*)",
+    module    = "org.conman.app.port70.handlers.blog",
+    config    = "/home/spc/web/boston/journal/blog.conf",
+    url       = "gopher://lucy.roswell.area51/",
+    extension = "%.port70$",
   },
   
   {
