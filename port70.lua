@@ -73,10 +73,6 @@ do
   CONF._internal                = {}
   CONF._internal.addr           = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
   package.loaded['port70.CONF'] = CONF
-
-  if not setugid(CONF.user) then
-    os.exit(exit.CONF,true)
-  end
   
   if not CONF.handlers then
     CONF.handlers = { }
@@ -204,6 +200,10 @@ if not okay then
   io.stderr:write(string.format("%s: %s\n",arg[1],err))
   syslog('error',"%s: %s",arg[1],err)
   os.exit(exit.OSERR,true)
+end
+
+if not setugid(CONF.user) then
+  os.exit(exit.CONF,true)
 end
 
 signal.catch('int')
