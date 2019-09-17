@@ -155,7 +155,7 @@ local function main(ios)
         "remote=%s status=false request=%q bytes=%d",
         ios.__remote.addr,
         "",
-        #msg
+        0
     )
     ios:close()
   end
