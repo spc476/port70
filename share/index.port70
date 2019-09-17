@@ -1,0 +1,27 @@
+Welcome to your new Gopher Server!
+
+	Lua{
+		local string = require "string"
+		local os     = require "os"
+		local mklink = require "mklink"
+		return mklink {
+			type = 'info',
+			display = string.format("Today is %s",os.date("%c")),
+		}
+	}Lua		
+	
+	file	/about.txt		About the site
+	file	/motd			News of the Day
+	dir	/archive/		Archive of useful stuff
+	dir	/test/			Some tests are here.
+	
+Links to other Gopher resources ... 
+
+	url	gopher://gopher.conman.org/1Gopher:Src:		Home of port70
+	url	https://github.com/spc476			Github Repo
+	url	gopher://gopher.floodgap.com/1/world		Other Gopher Servers
+	url	gopher://i-logout.cz/1/bongusta/		Phlog aggregator
+	url	gopher://gopher.black/1/moku-pona		Another Phlog aggregator
+	url	gopher://sdf.org/1/users/julienxx/Lobste.rs	Lobste.rs mirror
+	url	gopher://sdf.org/1/phlogs/			phlogs
+	url	gopher://sdf.org/				some stuff
