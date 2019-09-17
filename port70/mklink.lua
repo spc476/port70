@@ -27,7 +27,7 @@ local CONF   = require "port70.CONF"
 
 return function(info)
   return string.format(
-        "%s%s\t%s\t%s\t%d",
+        "%s%s\t%s\t%s\t%d\r\n",
         gtypes[info.type] or gtypes.file,
         info.display      or "",
         info.selector     or "",

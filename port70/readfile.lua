@@ -130,7 +130,7 @@ return function(filename,ext)
     end
     
     file:close()
-    return true,table.concat(acc,"\r\n") .. "\r\n.\r\n"
+    return true,table.concat(acc) .. ".\r\n"
   end
   
   local mime = mimetype:match(magic(filename))
