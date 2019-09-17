@@ -116,7 +116,7 @@ static int setugid(lua_State *L)
   if (setresuid(uid,uid,uid) == -1)
     return setugiderr(L,"setresuid()");
 
-  return setugidok(L,"successfully switch userid");
+  return setugidok(L,"successfully switched userid");
 }
 
 /*************************************************************************/
