@@ -1,21 +1,20 @@
-iWelcome to your new Gopher Server!		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-iSorry, no dynamic output here.		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-1Alternative index page		lucy.roswell.area51	7070
-0About the site	/about.txt	lucy.roswell.area51	7070
-0News of the Day	/motd	lucy.roswell.area51	7070
-1Archive of useful stuff	/archive/	lucy.roswell.area51	7070
-1Some tests are here.	/test/	lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-iLinks to other Gopher resources ... 		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
+iWelcome to your new Gopher Server!		example.com	70
+i		example.com	70
+iSorry, no dynamic output here.		example.com	70
+i		example.com	70
+1Alternative index page		example.com	70
+0About the site	/about.txt	example.com	70
+0News of the Day	/motd	example.com	70
+1Archive of useful stuff	/archive/	example.com	70
+1Some tests are here.	/test/	example.com	70
+i		example.com	70
+iLinks to other Gopher resources ... 		example.com	70
+i		example.com	70
 1Home of port70	Gopher:Src:	gopher.conman.org	70
-hGithub Repo	URL:https://github.com/spc476	lucy.roswell.area51	7070
+hGithub Repo	URL:https://github.com/spc476	example.com	70
 1Other Gopher Servers	/world	gopher.floodgap.com	70
 1Phlog aggregator	/bongusta/	i-logout.cz	70
 1Another Phlog aggregator	/moku-pona	gopher.black	70
 1Lobste.rs mirror	/users/julienxx/Lobste.rs	sdf.org	70
 1phlogs	/phlogs/	sdf.org	70
 1some stuff		sdf.org	70
-.
