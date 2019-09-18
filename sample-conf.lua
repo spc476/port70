@@ -157,7 +157,7 @@ handlers =
   },
   
   {
-    selector  = "^.*",
+    selector  = ".*",
     module    = "port70.handlers.filesystem",
     directory = "share",                             -- required,
     index     = { "index.port70" , "index.gopher" }, -- optional
