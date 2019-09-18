@@ -123,12 +123,13 @@ end
 
 function handler(info,match)
   local directory = info.directory
-  local selector  = match[1]
   local sep       = ""
   
   if #match == 1 then
     table.insert(match,1,"")
   end
+  
+  local selector = match[1]
   
   for _,segment in descend_path(match[2]) do
     if deny(info.no_access,segment) then
@@ -183,11 +184,11 @@ function handler(info,match)
   table.sort(files)
   
   local res = {}
-  
+
   for _,dir in ipairs(directories) do
     table.insert(res,string.format("1%s\t%s\t%s\t%d",
       dir,
-      selector .. sep .. dir,
+      selector .. dir .. '/',
       CONF.network.host,
       CONF.network.port
     ))
@@ -198,7 +199,7 @@ function handler(info,match)
     table.insert(res,string.format("%s%s\t%s\t%s\t%d",
       gtype,
       file,
-      selector .. sep .. file,
+      selector .. file,
       CONF.network.host,
       CONF.network.port
     ))
