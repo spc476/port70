@@ -62,3 +62,17 @@ luacheck:
 clean:
 	$(RM) $(shell find . -name '*~')
 	$(RM) $(shell find . -name '*.so')
+
+install: all
+	$(INSTALL) -d $(DESTDIR)$(LIBDIR)/port70
+	$(INSTALL) -d $(DESTDIR)$(LUADIR)/port70
+	$(INSTALL) -d $(DESTDIR)$(LUADIR)/port70/handlers
+	$(INSTALL_DATA)    port70/*.lua          $(DESTDIR)$(LUADIR)/port70
+	$(INSTALL_DATA)    port70/handlers/*.lua $(DESTDIR)$(LUADIR)/port70/handlers
+	$(INSTALL_PROGRAM) port70/*.so           $(DESTDIR)$(LIBDIR)/port70
+	$(INSTALL_PROGRAM) port70.lua            $(DESTDIR)$(BINDIR)/port70
+
+uninstall:
+	$(RM) -r $(DESTDIR)$(LUADIR)/port70
+	$(RM) -r $(DESTDIR)$(LIBDIR)/port70
+	$(RM) -r $(DESTDIR)$(BINDIR)/port70
