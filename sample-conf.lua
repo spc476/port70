@@ -29,8 +29,8 @@
 network =
 {
   host = "example.com",
-  addr = "0.0.0.0", -- optional, interface to listen on, IPv6 supported
-  port = 70,        -- optional, port to listen on
+  addr = "::", -- optional, default listens all interfaces, IPv4/IPv6
+  port = 70,   -- optional, port to listen on
 }
 
 -- ************************************************************************
@@ -145,8 +145,8 @@ handlers =
   -- -----------------------------------------------------------------------
   
   {
-    selector  = "^/archive(/.*)",
-    module    = "port80.handlers.filesystem",
+    selector  = "^(/archive)(/.*)",
+    module    = "port70.handlers.filesystem",
     directory = "/usr/src/archive",                  -- required
     index     = { "index.port70" , "index.gopher" }, -- optional
     extension = ".port70",                           -- optional
