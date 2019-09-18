@@ -28,7 +28,9 @@ network =
 
 handlers =
 {
-  selector  = "^(/.*)",
-  module    = "port70.handlers.filesystem",
-  directory = "share", -- change as needed
+  {
+    selector  = ".*",
+    module    = "port70.handlers.filesystem",
+    directory = "share", -- change as needed
+  }
 }
