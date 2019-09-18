@@ -1,0 +1,90 @@
+
+port70 - a Gopher server (RFC-1436) written in Lua.  This currently runs my
+own personal Gopher server at <gopher://gopher.conman.org/> but should be
+usable by people other than myself, unlike my previous Gopher server.
+
+Features:
+
+* Configurable filenames for Gopher index files.
+* A much nicer Gopher index file format native to this program.
+* Generates Gopher indexes for directories that lack a Gopher index file.
+* Support for user directories.
+* Support for URL: selectors.
+* Easily extensible with support for custom handlers.
+* Configuration via file.
+
+Prerequisites:
+
+* Lua 5.3 or higher
+* GNU libmagic (NOTE:  this is NOT image manipulation, but file
+  identification)
+* LPEG 1.0.0 or higher
+* A whole bunch of other Lua modules, available at:
+	* https://github.com/spc476/lua-conmanorg
+	* https://github.com/spc476/LPeg-Parsers
+
+Installation:
+
+This will require some work.  You will need to download the modules listed
+above from Github and get them installed.  The lua-conmanorg repository will
+take some futzing around to get it compiled (first hint:  remove any mention
+of tcc in the Makefile).  But once you have all the prerequisites installed,
+the server should just work.  
+
+Bulding:
+
+Just type "make" (there's one C module that might be required, depending
+upon your desired configuration).  If you have the Lua include files in a
+non-standard location, you may need to do:
+
+	make LUA_INCDIR=/path/to/Lua/includes
+
+or even
+
+	make LUA=<luaexec> LUA_INCDIR=/path/to/Lua/includes
+
+You can do "make install" if you want to install the server onto the system:
+
+	make install
+
+This will install files in the following locations:
+
+	/usr/local/bin/port70		 # server
+	/usr/local/lib/lua/5.3/port70/	 # server modules (written in C)
+	/usr/local/share/lua/5.3/port70/ # server modules (written in Lua)
+
+To fine tune, you can from the command line:
+
+	make [location] install
+
+The various [location] options are (multiple can be specified)
+
+	prefix=target-dir
+
+		target-dir/bin/port70
+		target-dir/lib/lua/5.3/port70/
+		target-dir/share/lua/5.3/port70/
+
+	LUADIR=target-dir
+
+		target-dir/port70/	# modules written in Lua
+
+	LIBDIR=target-dir
+
+		target-dir/port70/	# modules written in C
+
+	BINDIR=target-dir
+
+		target-dir/port70/	# server program
+
+Configuration:
+
+The file "minimal-conf.lua" is the bare minimum configuration file you'll
+need to serve up files from a directory, but do look at the sample-conf.lua
+file as that has extensive comments about each section and what is required,
+and what isn't.  It will help to know some Lua, especially Lua string
+patterns (its form of regex) as various sections of the configuration are
+applied to requests via pattern matching of the request.
+
+Gopher Index files
+
