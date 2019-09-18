@@ -5,7 +5,7 @@ Welcome to your new Gopher Server!
 		local os     = require "os"
 		local mklink = require "port70.mklink"
 		return mklink {
-			type = 'info',
+			type    = 'info',
 			display = string.format("Today is %s",os.date("%c")),
 		}
 	}Lua		
