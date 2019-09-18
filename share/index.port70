@@ -9,7 +9,8 @@ Welcome to your new Gopher Server!
 			display = string.format("Today is %s",os.date("%c")),
 		}
 	}Lua		
-	
+
+	dir	/index.gopher		Alternative index page	
 	file	/about.txt		About the site
 	file	/motd			News of the Day
 	dir	/archive/		Archive of useful stuff
