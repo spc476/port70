@@ -1,42 +1,21 @@
-iWelcome to Conman Laboratories		lucy.roswell.area51	7070
+iWelcome to your new Gopher Server!		lucy.roswell.area51	7070
 i		lucy.roswell.area51	7070
-iNOTE: RFC-1436 says this about selectors:		lucy.roswell.area51	7070
+iSorry, no dynamic output here.		lucy.roswell.area51	7070
 i		lucy.roswell.area51	7070
-i        ... an OPAQUE selector string ...  The selector string should		lucy.roswell.area51	7070
-i        MEAN NOTHING to the client software; it should never be		lucy.roswell.area51	7070
-i        modified by the client.		lucy.roswell.area51	7070
+1Alternative index page		lucy.roswell.area51	7070
+0About the site	/about.txt	lucy.roswell.area51	7070
+0News of the Day	/motd	lucy.roswell.area51	7070
+1Archive of useful stuff	/archive/	lucy.roswell.area51	7070
+1Some tests are here.	/test/	lucy.roswell.area51	7070
 i		lucy.roswell.area51	7070
-i(emphasis added)		lucy.roswell.area51	7070
+iLinks to other Gopher resources ... 		lucy.roswell.area51	7070
 i		lucy.roswell.area51	7070
-iThe selectors on this server *ARE OPAQUE* and *MUST* be sent *AS IS*		lucy.roswell.area51	7070
-ito the server.  Please note that the selectors here rarely start with		lucy.roswell.area51	7070
-ia '/' character.  Particularely, phlog entries start with a selector		lucy.roswell.area51	7070
-iof "Phlog:"---note the lack of '/' and the ending ':'.		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-iThank you.		lucy.roswell.area51	7070
-i  -- The Management		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-0About the server	About:Server	lucy.roswell.area51	7070
-0About the author	About:Me	lucy.roswell.area51	7070
-1Gopher Server Source Code	Gopher:Src:	lucy.roswell.area51	7070
-1Boston source code	Boston:Src:	lucy.roswell.area51	7070
-1CGILib source code	CGI:Src:	lucy.roswell.area51	7070
-1The Boston Diaries Phlog Feed	phlog.gopher	lucy.roswell.area51	7070
-1The Boston Diaries Phlog Archive	Phlog:	lucy.roswell.area51	7070
-0Latest Phlog Post	Phlog:2019/04/22.5	lucy.roswell.area51	7070
-1The Electric King James Bible	Bible:	lucy.roswell.area51	7070
-1The Quick and Dirty B-Movie Plot Generator	Movie:	lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
+1Home of port70	Gopher:Src:	gopher.conman.org	70
+hGithub Repo	URL:https://github.com/spc476	lucy.roswell.area51	7070
 1Other Gopher Servers	/world	gopher.floodgap.com	70
 1Phlog aggregator	/bongusta/	i-logout.cz	70
 1Another Phlog aggregator	/moku-pona	gopher.black	70
 1Lobste.rs mirror	/users/julienxx/Lobste.rs	sdf.org	70
-1jstg gopher	/users/jstg/	sdf.org	70
 1phlogs	/phlogs/	sdf.org	70
 1some stuff		sdf.org	70
-i		lucy.roswell.area51	7070
-iWisdom of the day:		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-iMost men and nations die lying down.		lucy.roswell.area51	7070
-i		lucy.roswell.area51	7070
-0robots.txt-because we can	/robots.txt	lucy.roswell.area51	7070
+.
