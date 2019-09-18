@@ -88,7 +88,7 @@ function init(conf)
   end
   
   if not conf.no_access then
-    conf.no_access = { "%." }
+    conf.no_access = { "^%." }
   end
   
   return true
