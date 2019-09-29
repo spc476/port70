@@ -115,16 +115,16 @@ handlers =
   -- we aren't a web server but a tea pot.
   -- --------------------------------------------------------------------
   
-  { selector = "GET"      , module = "port70.handlers.http" },
-  { selector = "HEAD"     , module = "port70.handlers.http" },
-  { selector = "PUT"      , module = "port70.handlers.http" },
-  { selector = "DELETE"   , module = "port70.handlers.http" },
-  { selector = "CONNECT"  , module = "port70.handlers.http" },
-  { selector = "OPTIONS"  , module = "port70.handlers.http" },
-  { selector = "TRACE"    , module = "port70.handlers.http" },
-  { selector = "BREW"     , module = "port70.handlers.http" }, -- RFC-2324, in case people get cute
-  { selector = "PROPFIND" , module = "port70.handlers.http" },
-  { selector = "WHEN"     , module = "port70.handlers.http" },
+  { selector = "^GET "      , module = "port70.handlers.http" },
+  { selector = "^HEAD "     , module = "port70.handlers.http" },
+  { selector = "^PUT "      , module = "port70.handlers.http" },
+  { selector = "^DELETE "   , module = "port70.handlers.http" },
+  { selector = "^CONNECT "  , module = "port70.handlers.http" },
+  { selector = "^OPTIONS "  , module = "port70.handlers.http" },
+  { selector = "^TRACE "    , module = "port70.handlers.http" },
+  { selector = "^BREW "     , module = "port70.handlers.http" }, -- RFC-2324, in case people get cute
+  { selector = "^PROPFIND " , module = "port70.handlers.http" },
+  { selector = "^WHEN "     , module = "port70.handlers.http" },
   
   -- ---------------------------------------------------------------------
   -- URL handler.  If a gopher client doesn't understand the URL: marker
