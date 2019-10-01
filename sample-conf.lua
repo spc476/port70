@@ -84,9 +84,9 @@ handlers =
   -- The user directory handler, allowing individual users of the computer
   -- to serve up gopher content.  The pattern defines three captures:
   --
-  --	1. The base of the selector
-  --	2. The username
-  --	3. The rest of the selector
+  --    1. The base of the selector
+  --    2. The username
+  --    3. The rest of the selector
   --
   -- All three patterns are required.  The directory field is the
   -- subdirectory underneath the users $HOME that is served up.  The index
@@ -135,6 +135,23 @@ handlers =
   {
    selector = "^URL:(.*)",
    module   = "port70.handlers.url",
+  },
+  
+  -- --------------------------------------------------------------------
+  -- The experimental redirection handler.  This can be useful, and I hope
+  -- it catches on.  Basically, for any matches, this module will return
+  -- an error, with the given text ("Permanent redirect") and the location
+  -- where the resource has moved to (the type shall not change).
+  -- --------------------------------------------------------------------
+  
+  {
+    selector = "^oldpath/(.*)",
+    module   = "port70.handlers.redirect",
+    redirect =
+    {
+      type     = "Permanent redirect", -- should be this exact text
+      selector = "newpath/$1"          -- capture reference
+    },
   },
   
   -- --------------------------------------------------------------------

@@ -11,6 +11,7 @@ Features:
 * Support for user directories.
 * Support for URL: selectors.
 * Easily extensible with support for custom handlers.
+* Experiemental support for selector redirection.
 * Configuration via file.
 
 Prerequisites:
