@@ -93,7 +93,7 @@ return function(filename,ext)
   if filename:match(ext) then
     local file,err = io.open(filename,"r")
     if not file then
-      return false,err
+      return false,'Not found'
     end
     
     local acc = {}
@@ -138,7 +138,7 @@ return function(filename,ext)
     local file,err = io.open(filename,"r")
     if not file then
       syslog('error',"io.open(%q) = %s",filename,err)
-      return false,err
+      return false,'Not found'
     end
     
     local acc = {}
@@ -152,7 +152,7 @@ return function(filename,ext)
   else
     local file,err = io.open(filename,"rb")
     if not file then
-      return false,err
+      return false,'Not found'
     end
     
     local data = file:read("*a")
