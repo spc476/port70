@@ -91,7 +91,7 @@ end
 
 return function(filename,ext)
   if filename:match(ext) then
-    local file,err = io.open(filename,"r")
+    local file = io.open(filename,"r")
     if not file then
       return false,'Not found'
     end
@@ -150,7 +150,7 @@ return function(filename,ext)
     return true,table.concat(acc,"\r\n") .. "\r\n.\r\n"
     
   else
-    local file,err = io.open(filename,"rb")
+    local file = io.open(filename,"rb")
     if not file then
       return false,'Not found'
     end
