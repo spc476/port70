@@ -163,6 +163,7 @@ local function main(ios)
   local selector,search = parserequest:match(request)
   local text            = mklink { type = 'error' , display = "Selector not found" }
   local okay            = false
+  local selectorp
   
   for _,info in ipairs(CONF.handlers) do
     local match = table.pack(selector:match(info.selector))
@@ -171,10 +172,10 @@ local function main(ios)
         repeat local line = ios:read("*l") until line == ""
       end
       
-      okay,text = info.code.handler(info,match,search)
+      okay,text,selectorp = info.code.handler(info,match,search)
       
       if not okay then
-        text = mklink{ type = 'error' , display = text }
+        text = mklink{ type = 'error' , display = text , selector = selectorp or selector }
       end
       break
     end
