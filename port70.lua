@@ -78,14 +78,6 @@ do
     CONF.handlers = { }
   end
   
-  -- -------------------------------------------------------------------------
-  -- The handlers are sorted by length of selector (longest match wins!),
-  -- and then the selector is swapped out with an LPEG pattern that matches
-  -- said string, plus any additional text beyond the selector.  This is
-  -- pretty much what I want, with any sub-parsing done by the individual
-  -- handler.  We also initialize each handler as well.
-  -- -------------------------------------------------------------------------
-  
   local function loadmodule(info)
     local function notfound()
       return false,"Selector not found"
