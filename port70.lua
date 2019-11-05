@@ -138,6 +138,8 @@ local mklink = require "port70.mklink" -- XXX hack
 
 local parserequest = lpeg.C(lpeg.R" ~"^0)
                    * (lpeg.P"\t" * lpeg.C(lpeg.R" ~"^1))^-1
+                   * lpeg.P(-1)
+                   + lpeg.Cc(nil)
                    
 local function main(ios)
   local request = ios:read("*l")
@@ -157,22 +159,24 @@ local function main(ios)
   local okay            = false
   local selectorp
   
-  for _,info in ipairs(CONF.handlers) do
-    local match = table.pack(selector:match(info.selector))
-    if #match > 0 then
-      if info.module == 'http' then
-        repeat local line = ios:read("*l") until line == ""
+  if selector then
+    for _,info in ipairs(CONF.handlers) do
+      local match = table.pack(selector:match(info.selector))
+      if #match > 0 then
+        if info.module == 'http' then
+          repeat local line = ios:read("*l") until line == ""
+        end
+        
+        okay,text,selectorp = info.code.handler(info,match,search)
+        
+        if not okay then
+          text = mklink{ type = 'error' , display = text , selector = selectorp or selector }
+        end
+        break
       end
-      
-      okay,text,selectorp = info.code.handler(info,match,search)
-      
-      if not okay then
-        text = mklink{ type = 'error' , display = text , selector = selectorp or selector }
-      end
-      break
     end
   end
-  
+    
   ios:write(text)
   syslog(
         'info',
