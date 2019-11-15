@@ -25,7 +25,6 @@ local signal  = require "org.conman.signal"
 local nfl     = require "org.conman.nfl"
 local tcp     = require "org.conman.nfl.tcp"
 local exit    = require "org.conman.const.exit"
-local net     = require "org.conman.net"
 local lpeg    = require "lpeg"
 local setugid = require "port70.setugid"
 
@@ -70,8 +69,6 @@ do
     CONF.network.port = 70
   end
   
-  CONF._internal                = {}
-  CONF._internal.addr           = net.address2(CONF.network.addr,'any','tcp',CONF.network.port)[1]
   package.loaded['port70.CONF'] = CONF
   
   if not CONF.handlers then
@@ -191,7 +188,7 @@ end
 
 -- ************************************************************************
 
-local okay,err = tcp.listena(CONF._internal.addr,main)
+local okay,err = tcp.listen(CONF.network.addr,CONF.network.port,main)
 
 if not okay then
   io.stderr:write(string.format("%s: %s\n",arg[1],err))
@@ -206,6 +203,7 @@ end
 signal.catch('int')
 signal.catch('term')
 syslog('info',"entering service")
+
 nfl.server_eventloop(function() return signal.caught() end)
 
 for _,info in ipairs(CONF.handlers) do
