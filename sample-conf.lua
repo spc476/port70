@@ -155,6 +155,16 @@ handlers =
   },
   
   -- --------------------------------------------------------------------
+  -- The sample handler.  This just exists to give you a skeleton of a 
+  -- handler to work from.
+  -- --------------------------------------------------------------------
+  
+  {
+    selector = "^sample/(.*)",
+    module   = "port70.handlers.sample",
+  },
+  
+  -- --------------------------------------------------------------------
   -- The filesystem handler.  You will most likely want to use this one.
   -- You are not restricted to a single instance of this.  The first example
   -- sets up a hypthetical source of tarballs, while the second example will
