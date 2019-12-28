@@ -208,7 +208,7 @@ nfl.server_eventloop(function() return signal.caught() end)
 
 for _,info in ipairs(CONF.handlers) do
   if info.fini then
-    local ok,status = pcall(info.code.fini)
+    local ok,status = pcall(info.code.fini,info)
     if not ok then
       syslog('error',"%s: %s",info.module,status)
     end
