@@ -64,7 +64,7 @@ static int setugid(lua_State *L)
     return setugidok(L,"Not electing to switch userid");
     
   if (getuid() != 0)
-    return setugidok(L,"Not running at root---can't switch userid");
+    return setugidok(L,"Not running as root---can't switch userid");
     
   luaL_checktype(L,1,LUA_TTABLE);
   
