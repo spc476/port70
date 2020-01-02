@@ -23,10 +23,12 @@
 
 local syslog   = require "org.conman.syslog"
 local mimetype = require "org.conman.parsers.mimetype"
+local fsys     = require "org.conman.fsys"
 local magic    = require "org.conman.fsys.magic"
 local url      = require "org.conman.parsers.url.gopher"
                + require "org.conman.parsers.url"
 local mklink   = require "port70.mklink"
+local cgi      = require "port70.cgi"
 local lpeg     = require "lpeg"
 local io       = require "io"
 local table    = require "table"
@@ -89,7 +91,11 @@ end
 
 -- ************************************************************************
 
-return function(filename,ext)
+return function(filename,ext,info,_,search,orig_selector,remote)
+  if fsys.access(filename,"rx") then
+    return cgi(filename,info,search,orig_selector,remote)
+  end
+  
   if filename:match(ext) then
     local file = io.open(filename,"r")
     if not file then

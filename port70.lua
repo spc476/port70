@@ -164,7 +164,7 @@ local function main(ios)
           repeat local line = ios:read("*l") until line == ""
         end
         
-        okay,text,selectorp = info.code.handler(info,match,search)
+        okay,text,selectorp = info.code.handler(info,match,search,selector,ios.__remote)
         
         if not okay then
           text = mklink{ type = 'error' , display = text , selector = selectorp or selector }

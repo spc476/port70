@@ -121,7 +121,7 @@ end
 
 -- ************************************************************************
 
-function handler(info,match)
+function handler(info,match,search,orig_selector,remote)
   local directory = info.directory
   local sep       = ""
   
@@ -152,7 +152,7 @@ function handler(info,match)
         return false,"Not found"
       end
     elseif finfo.mode.type == 'file' then
-      return readfile(directory,info.extension)
+      return readfile(directory,info.extension,info,match,search,orig_selector,remote)
     else
       return false,"Not found"
     end
@@ -160,7 +160,7 @@ function handler(info,match)
   
   for _,index in ipairs(info.index) do
     if fsys.access(directory .. "/" .. index,"r") then
-      return readfile(directory .. "/" .. index,info.extension)
+      return readfile(directory .. "/" .. index,info.extension,info,search,orig_selector,remote)
     end
   end
   

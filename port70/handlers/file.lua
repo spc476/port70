@@ -53,8 +53,8 @@ end
 
 -- ************************************************************************
 
-function handler(info)
-  return readfile(info.file,info.extension)
+function handler(info,_,search,selector)
+  return readfile(info.file,info.extension,info,search,selector)
 end
 
 -- ************************************************************************

@@ -19,7 +19,7 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
--- luacheck: globals network syslog no_access user handlers qotd
+-- luacheck: globals network syslog no_access user handlers cgi
 -- luacheck: ignore 611
 
 -- ************************************************************************
@@ -155,7 +155,7 @@ handlers =
   },
   
   -- --------------------------------------------------------------------
-  -- The sample handler.  This just exists to give you a skeleton of a 
+  -- The sample handler.  This just exists to give you a skeleton of a
   -- handler to work from.
   -- --------------------------------------------------------------------
   
@@ -192,6 +192,103 @@ handlers =
     no_access =                                      -- optional
     {
       "^%.",
+    },
+  },
+}
+
+-- ************************************************************************
+-- CGI definition block, optional
+--
+-- Any file foudn with the executable bit set is considered a CGI script and
+-- will be executed as such.  This module implements the CGI standard as
+-- defined in RFC-3875 with some deviations due to the semantics of gopher.
+-- The script will be executed and any output will be sent to the client.
+-- The script SHOULD NOT include the standard CGI header output as that does
+-- not make semantic sense for gopher.  The output SHOULD be what a gopher
+-- client is expecting per the selector type.  The following environment
+-- variables will be defined:
+--
+-- GATEWAY_INTERFACE    Will be set to "CGI/1.1"
+-- PATH_INFO            May be set (see RFC-3875 for details)
+-- PATH_TRANSLATED      May be set (see RFC-3875 for details)
+-- QUERY_STRING         Will be set to the passed in search query, or ""
+-- REMOTE_ADDR          IP address of the client
+-- REMOTE_HOST          IP address of the client (allowed in RFC-3875)
+-- REQUEST_METHOD       Set to "" (not defined for gopher)
+-- SCRIPT_NAME          Name of the script per the gopher selector
+-- SERVER_NAME          Per network.host
+-- SERVER_PORT          Per network.port
+-- SERVER_PROTOCOL      Set to "GOPHER"
+-- SERVER_SOFTWARE      Set to "port70"
+-- GOPHER_DOCUMENT_ROOT Set to the parent directory of the CGI script
+-- GOPHER_SCRIPT_FILENAME Set to the full path of the script
+-- GOPHER_SELECTOR      Set to the raw selector
+--
+-- If this block is NOT defined, then no scripts will be run, and any file
+-- found that is marked as 'executable' will return "Not found" as a
+-- security measure.
+-- ************************************************************************
+
+cgi =
+{
+  -- ----------------------------------------------------------------
+  -- The following variables apply to ALL CGI scripts.  They are all
+  -- optional, and not not beed to be defined.
+  -- ----------------------------------------------------------------
+  
+  -- ------------------------------------------------------
+  -- Define to true if you do no want leading slashes--e.g.
+  --    gopher://example.com/0script
+  -- If NOT defined, then a leading slash is assumed---e.g.
+  --    gopher://example.com/0/script
+  -- ------------------------------------------------------
+  
+  no_slash = true,
+  
+  -- -----------------------------------------------------------
+  -- All scripts will use this as the current working directory.
+  -- -----------------------------------------------------------
+  
+  cwd = "/tmp",
+  
+  -- ------------------------------------------------------------------
+  -- Additional environment variables can be set.  The following list
+  -- is probably what would be nice to have.
+  -- ------------------------------------------------------------------
+  
+  env =
+  {
+    PATH = "/usr/local/bin:/usr/bin:/bin",
+    LANG = "en_US.UTF-8",
+  },
+  
+  -- -------------------------------------------------------------------
+  -- The instance block allows you to define values per CGI script and
+  -- will override any global settings.
+  -- -------------------------------------------------------------------
+  
+  instance =
+  {
+    ['^/private/raw.*'] =
+    {
+      cwd = '/var/tmp',
+      
+      -- -----------------------------------------------------------------
+      -- If you need to specify arguments to the script, define them here.
+      -- -----------------------------------------------------------------
+      
+      arg =
+      {
+        "first-argument",
+        "second-argument",
+        "third-argument",
+      },
+      
+      env =
+      {
+        SAMPLE_CONFIG = "sample.config",
+        PATH          = "/var/bin",
+      },
     },
   },
 }

@@ -22,8 +22,9 @@
 -- luacheck: globals init handler fini
 -- luacheck: ignore 611
 
-local syslog = require "org.conman.syslog"
-local string = require "string"
+local syslog   = require "org.conman.syslog"
+local string   = require "string"
+local tostring = tostring
 
 _ENV = {}
 
@@ -45,28 +46,34 @@ function init(conf)
 end
 
 -- ************************************************************************
--- Usage:	okay,text[,selectorp] = sample.handler(conf,match[,search])
+-- Usage:	okay,text[,selectorp] = sample.handler(conf,match[,search],selector,remote)
 -- Desc:	Return content for a given selector
 -- Input:	conf (table) configuration block
---		match (table) the matched data from the selector pattern
---		search (string/optional) a gopher search term
+--              match (table) the matched data from the selector pattern
+--              search (string/optional) a gopher search term
+--              selector (string) raw selector
+--		remote (userdata/address) address of remote side
 -- Return:	okay (boolean) true if okay, false if error
 --		text (string) content if true, error message otherwise
 --		selectorp (string/optional) selector to use for errors
 -- ************************************************************************
 
-function handler(conf,match,search)
+function handler(conf,match,search,selector,remote)
   return true,string.format([[
 conf.module=%q
 conf.selector=%q
 match=%q
 search=%q
+selector=%q"
+remote=%s
 .
 ]],
 	conf.module,
 	conf.selector,
 	match[1],
-	search or ""
+	search or "",
+	selector,
+	tostring(remote)
   )
 end
 
