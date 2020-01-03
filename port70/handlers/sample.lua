@@ -46,19 +46,20 @@ function init(conf)
 end
 
 -- ************************************************************************
--- Usage:	okay,text[,selectorp] = sample.handler(conf,match[,search],selector,remote)
+-- Usage:	okay,text[,selectorp] = sample.handler(conf,request)
 -- Desc:	Return content for a given selector
 -- Input:	conf (table) configuration block
---              match (table) the matched data from the selector pattern
---              search (string/optional) a gopher search term
---              selector (string) raw selector
---		remote (userdata/address) address of remote side
+--              request (table) request---table with following fields:
+--			* selector (string) requested selector
+--			* search (string) search string (if any)
+--			* match (array/string) results of matched selector
+--			* remote (userdata/address) remote address
 -- Return:	okay (boolean) true if okay, false if error
 --		text (string) content if true, error message otherwise
 --		selectorp (string/optional) selector to use for errors
 -- ************************************************************************
 
-function handler(conf,match,search,selector,remote)
+function handler(conf,request)
   return true,string.format([[
 conf.module=%q
 conf.selector=%q
@@ -70,10 +71,10 @@ remote=%s
 ]],
 	conf.module,
 	conf.selector,
-	match[1],
-	search or "",
-	selector,
-	tostring(remote)
+	request.match[1],
+	request.search or "",
+	request.selector,
+	tostring(request.remote)
   )
 end
 

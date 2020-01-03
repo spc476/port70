@@ -82,7 +82,7 @@ end
 
 -- ************************************************************************
 
-return function(program,cinfo,search,selector,remote)
+return function(program,cinfo,request)
   local conf = require "port70.CONF"
   
   if not conf.cgi then
@@ -142,33 +142,10 @@ return function(program,cinfo,search,selector,remote)
       pipe.read:close()
     end
     
-    local sl  = conf.cgi.no_slash and 2 or 1
-    
-    if conf.cgi.instance then
-      for _,info in pairs(conf.cgi.instance) do
-        if info.no_slash then sl = 2 end
-      end
-    end
-    
-    local _,e    = program:find(cinfo.directory,1,true)
-    local script = e and program:sub(e+sl,-1) or program
-    local args   = {}
-    local env    =
-    {
-      GOPHER_DOCUMENT_ROOT   = cinfo.directory,
-      GOPHER_SCRIPT_FILENAME = program,
-      GOPHER_SELECTOR        = selector,
-      GATEWAY_INTERFACE      = "CGI/1.1",
-      QUERY_STRING           = search or "",
-      REMOTE_ADDR            = remote.addr,
-      REMOTE_HOST            = remote.addr,
-      REQUEST_METHOTD        = "",
-      SCRIPT_NAME            = script,
-      SERVER_NAME            = conf.network.host,
-      SERVER_PORT            = conf.network.port,
-      SERVER_PROTOCOL        = "GOPHER",
-      SERVER_SOFTWARE        = "port70",
-    }
+    local cwd      = conf.cgi.cwd
+    local no_slash = conf.cgi.no_slash
+    local args     = {}
+    local env      = {}
     
     if conf.cgi.env then
       for var,val in pairs(conf.cgi.env) do
@@ -176,25 +153,30 @@ return function(program,cinfo,search,selector,remote)
       end
     end
     
-    _,e = selector:find(fsys.basename(program),1,true)
-    local pathinfo = e and selector:sub(e+sl,-1) or selector
-    
-    if pathinfo ~= "" then
-      env.PATH_INFO       = pathinfo
-      env.PATH_TRANSLATED = env.GOPHER_DOCUMENT_ROOT .. "/" .. env.PATH_INFO
-    end
-    
-    local cwd = conf.cgi.cwd
-    
     if conf.cgi.instance then
       for name,info in pairs(conf.cgi.instance) do
-        if selector:match(name) then
+        if request.selector:match(name) then
           if info.cwd then cwd = info.cwd end
+          
+          -- ---------------------------------------------------------------
+          -- We want an instance no_slash to override a global no_slash, but
+          -- if we can't just simply assign no_slash to the instance
+          -- no_slash because if it doesn't exist, then it will set no_slash
+          -- to false, possibly overriding the global var, which is NOT what
+          -- is wanted here.  We need to check if the instance no_slash
+          -- exists to properly override it.
+          -- ---------------------------------------------------------------
+          
+          if type(info.no_slash) == 'boolean' then
+            no_slash = info.no_slash
+          end
+          
           if info.arg then
             for i,arg in ipairs(info.arg) do
               args[i] = arg
             end
           end
+          
           if info.env then
             for var,val in pairs(info.env) do
               env[var] = val
@@ -203,7 +185,45 @@ return function(program,cinfo,search,selector,remote)
         end
       end
     end
-        
+    
+    local _,e    = program:find(cinfo.directory,1,true)
+    local script = e and program:sub(e+1,-1) or program
+
+    script = request.match[1] .. script
+    if no_slash and script:match("^/") then
+      script = script:sub(2,-1)
+    end
+    
+    env.GOPHER_DOCUMENT_ROOT   = cinfo.directory
+    env.GOPHER_SCRIPT_FILENAME = program
+    env.GOPHER_SELECTOR        = request.selector
+    env.GATEWAY_INTERFACE      = "CGI/1.1"
+    env.QUERY_STRING           = request.search or ""
+    env.REMOTE_ADDR            = request.remote.addr
+    env.REMOTE_HOST            = request.remote.addr
+    env.REQUEST_METHOTD        = ""
+    env.SCRIPT_NAME            = script
+    env.SERVER_NAME            = conf.network.host
+    env.SERVER_PORT            = conf.network.port
+    env.SERVER_PROTOCOL        = "GOPHER"
+    env.SERVER_SOFTWARE        = "port70"
+    
+    syslog('debug',"script=%q",script)
+    
+    _,e = request.selector:find(fsys.basename(program),1,true)
+    local pathinfo = e and request.selector:sub(e+1,-1) or request.selector
+    
+    if pathinfo ~= "" then
+      env.PATH_TRANSLATED = env.GOPHER_DOCUMENT_ROOT .. pathinfo
+      
+      pathinfo = request.match[1] .. pathinfo
+      if no_slash and pathinfo:match("^/") then
+        pathinfo = pathinfo:sub(2,-1)
+      end
+      
+      env.PATH_INFO       = pathinfo
+    end
+    
     if cwd then
       local okay,err3 = fsys.chdir(cwd)
       if not okay then

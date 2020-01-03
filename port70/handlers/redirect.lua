@@ -41,10 +41,10 @@ end
 
 -- ************************************************************************
 
-function handler(conf,match)
+function handler(conf,request)
   return false,
          conf.redirect.type,
-         redirect_subst:match(conf.redirect.selector,1,match)
+         redirect_subst:match(conf.redirect.selector,1,request.match)
 end
 
 -- ************************************************************************

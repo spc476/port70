@@ -169,6 +169,15 @@ handlers =
   -- You are not restricted to a single instance of this.  The first example
   -- sets up a hypthetical source of tarballs, while the second example will
   -- serve up all other selectors that haven't matched by a file.
+  --
+  -- The index field is a list of filenames that will be displayed if a
+  -- directory is specified.
+  --
+  -- The dirext field is a list of extensions for files that should have
+  -- the 'dir' selector type instead of 'file'.
+  --
+  -- The extension field is the extension used for special processing
+  -- of an index file.
   -- -----------------------------------------------------------------------
   
   {
@@ -176,6 +185,7 @@ handlers =
     module    = "port70.handlers.filesystem",
     directory = "/usr/src/archive",                  -- required
     index     = { "index.port70" , "index.gopher" }, -- optional
+    dirext    = { ".port70" , ".gopher" },           -- optional
     extension = ".port70",                           -- optional
     no_access =                                      -- optional
     {

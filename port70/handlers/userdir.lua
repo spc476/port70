@@ -41,8 +41,8 @@ end
 
 -- ************************************************************************
 
-function handler(conf,match)
-  local userdir = getuserdir(match[2])
+function handler(conf,request)
+  local userdir = getuserdir(request.match[2])
   if not userdir then
     return false,"Not found"
   end
@@ -58,10 +58,14 @@ function handler(conf,match)
     path      = conf.path,
     module    = "port70.handlers.filesystem",
     directory = userdir,
-    no_access = conf.no_access
+    index     = conf.index,
+    extension = conf.extension,
+    dirext    = conf.dirext,
+    no_access = conf.no_access,
   }
-  
-  return filesystem.handler(fsconf,{ match[1] .. match[2], match[3] })
+    
+  request.match = { request.match[1] .. request.match[2] , request.match[3] }
+  return filesystem.handler(fsconf,request)
 end
 
 -- ************************************************************************

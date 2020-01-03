@@ -28,11 +28,10 @@ local gtypes   = require "org.conman.const.gopher-types"
 local syslog   = require "org.conman.syslog"
 local errno    = require "org.conman.errno"
 local fsys     = require "org.conman.fsys"
-local CONF     = require "port70.CONF"
 local readfile = require "port70.readfile"
+local mklink   = require "port70.mklink"
 local lpeg     = require "lpeg"
 local table    = require "table"
-local string   = require "string"
 local ipairs   = ipairs
 local type     = type
 
@@ -91,6 +90,16 @@ function init(conf)
     conf.no_access = { "^%." }
   end
   
+  if not conf.dirext then
+    conf.dirext = { "%.port70$" , "%.gopher$" }
+  elseif type(conf.dirext) == 'string' then
+    conf.dirext = { extension:match(conf.dirext) }
+  elseif type(conf.dirext) == 'table' then
+    for i = 1  , #conf.dirext do
+      conf.dirext[i] = extension:match(conf.dirext[i])
+    end
+  end
+  
   return true
 end
 
@@ -105,33 +114,33 @@ local function gophertype(filename)
   end
   
   if mime.type:match "^text/html" then
-    return gtypes.html
+    return 'html'
   elseif mime.type:match "^text/" then
-    return gtypes.file
+    return 'file'
   elseif mime.type:match "^image/gif" then
-    return gtypes.gif
+    return 'gif'
   elseif mime.type:match "^image/" then
-    return gtypes.image
+    return 'image'
   elseif mime.type:match "^audio/" then
-    return gtypes.sound
+    return 'sound'
   else
-    return gtypes.binary
+    return 'binary'
   end
 end
 
 -- ************************************************************************
 
-function handler(info,match,search,orig_selector,remote)
+function handler(info,request)
   local directory = info.directory
   local sep       = ""
   
-  if #match == 1 then
-    table.insert(match,1,"")
+  if #request.match == 1 then
+    table.insert(request.match,1,"")
   end
   
-  local selector = match[1]
+  local selector = request.match[1]
   
-  for _,segment in descend_path(match[2]) do
+  for _,segment in descend_path(request.match[2]) do
     if deny(info.no_access,segment) then
       return false,"Not found"
     end
@@ -141,6 +150,7 @@ function handler(info,match,search,orig_selector,remote)
     sep       = "/"
     
     local finfo,err1 = fsys.stat(directory)
+
     if not finfo then
       syslog('error',"stat(%q) = %s",directory,errno[err1])
       return false,"Not found"
@@ -152,7 +162,7 @@ function handler(info,match,search,orig_selector,remote)
         return false,"Not found"
       end
     elseif finfo.mode.type == 'file' then
-      return readfile(directory,info.extension,info,match,search,orig_selector,remote)
+      return readfile(directory,info.extension,info,request)
     else
       return false,"Not found"
     end
@@ -160,52 +170,54 @@ function handler(info,match,search,orig_selector,remote)
   
   for _,index in ipairs(info.index) do
     if fsys.access(directory .. "/" .. index,"r") then
-      return readfile(directory .. "/" .. index,info.extension,info,search,orig_selector,remote)
+      return readfile(directory .. "/" .. index,info.extension,info,request)
     end
   end
   
-  local directories = {}
-  local files       = {}
+  local links = {}
+  
+  local function is_index_file(name)
+    for _,ext in ipairs(info.dirext) do
+      if name:match(ext) then
+        return true
+      end
+    end
+  end
   
   for file in fsys.dir(directory) do
     if not deny(info.no_access,file) then
       local finfo = fsys.stat(directory .. "/" .. file)
       if finfo then
         if finfo.mode.type == 'file' then
-          table.insert(files,file)
+          if is_index_file(file) then
+            table.insert(links,{ type = 'dir' , selector = selector .. file , display = file })
+          else
+            local gtype = gophertype(directory .. '/' .. file)
+            table.insert(links,{ type = gtype , selector = selector .. file , display = file })
+          end
         elseif finfo.mode.type == 'dir' then
-          table.insert(directories,file)
+          table.insert(links,{ type = 'dir' , selector = selector .. file .. '/', display = file })
         end
       end
     end
   end
   
-  table.sort(directories)
-  table.sort(files)
+  table.sort(links,function(a,b)
+    if a.type == 'dir' and b.type ~= 'dir' then
+      return true
+    elseif a.type ~= 'dir' and b.type == 'dir' then
+      return false
+    end
+    
+    return a.selector < b.selector
+  end)
   
   local res = {}
-
-  for _,dir in ipairs(directories) do
-    table.insert(res,string.format("1%s\t%s\t%s\t%d",
-      dir,
-      selector .. dir .. '/',
-      CONF.network.host,
-      CONF.network.port
-    ))
+  for _,link in ipairs(links) do
+    table.insert(res,mklink(link))
   end
   
-  for _,file in ipairs(files) do
-    local gtype = gophertype(directory .. "/" .. file)
-    table.insert(res,string.format("%s%s\t%s\t%s\t%d",
-      gtype,
-      file,
-      selector .. file,
-      CONF.network.host,
-      CONF.network.port
-    ))
-  end
-  
-  return true,table.concat(res,"\r\n") .. "\r\n.\r\n"
+  return true,table.concat(res) .. ".\r\n"
 end
 
 -- ************************************************************************

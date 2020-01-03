@@ -47,8 +47,8 @@ site.
 </HTML>
 ]]
 
-function handler(_,match)
-  return true,document:gsub("LINK",match[1])
+function handler(_,request)
+  return true,document:gsub("LINK",request.match[1])
 end
 
 return _ENV

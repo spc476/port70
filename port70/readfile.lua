@@ -64,6 +64,12 @@ local parseline do
   parseline = entry + code + info
 end
 
+local cleanpath do
+  local char = lpeg.P"/"^1 / "/"
+             + lpeg.P(1)
+  cleanpath  = lpeg.Cs(char^0)
+end
+
 -- ************************************************************************
 
 local function execblock(name,file)
@@ -91,9 +97,11 @@ end
 
 -- ************************************************************************
 
-return function(filename,ext,info,_,search,orig_selector,remote)
+return function(filename,ext,info,request)
+  filename = cleanpath:match(filename)
+  syslog('debug',"readfile=%q",filename)
   if fsys.access(filename,"rx") then
-    return cgi(filename,info,search,orig_selector,remote)
+    return cgi(filename,info,request)
   end
   
   if filename:match(ext) then
