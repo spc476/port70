@@ -201,7 +201,7 @@ return function(program,cinfo,request)
     env.QUERY_STRING           = request.search or ""
     env.REMOTE_ADDR            = request.remote.addr
     env.REMOTE_HOST            = request.remote.addr
-    env.REQUEST_METHOTD        = ""
+    env.REQUEST_METHOD         = ""
     env.SCRIPT_NAME            = script
     env.SERVER_NAME            = conf.network.host
     env.SERVER_PORT            = conf.network.port
