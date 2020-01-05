@@ -160,16 +160,13 @@ local function main(ios)
     for _,info in ipairs(CONF.handlers) do
       local match = table.pack(selector:match(info.selector))
       if #match > 0 then
-        if info.module == 'http' then
-          repeat local line = ios:read("*l") until line == ""
-        end
-        
         local req =
         {
           selector = selector,
           search   = search,
           match    = match,
-          remote   = ios.__remote
+          remote   = ios.__remote,
+          _ios     = ios,
         }
         
         okay,text,selectorp = info.code.handler(info,req)

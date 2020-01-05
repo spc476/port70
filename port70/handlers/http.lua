@@ -63,7 +63,8 @@ local document = "I'm a little teapot\r\n"
 
 -- ***********************************************************************
 
-function handler()
+function handler(_,request)
+  repeat local line = request._ios:read("l") until line == ""
   local hdr = string.format(header,os.date("!%a, %d %b %Y %H:%M:%S GMT"),#document)
   return true,hdr .. document
 end
