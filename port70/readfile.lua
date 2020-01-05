@@ -99,7 +99,6 @@ end
 
 return function(filename,ext,info,request)
   filename = cleanpath:match(filename)
-  syslog('debug',"readfile=%q",filename)
   if fsys.access(filename,"rx") then
     return cgi(filename,info,request)
   end

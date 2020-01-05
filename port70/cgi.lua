@@ -208,8 +208,6 @@ return function(program,cinfo,request)
     env.SERVER_PROTOCOL        = "GOPHER"
     env.SERVER_SOFTWARE        = "port70"
     
-    syslog('debug',"script=%q",script)
-    
     _,e = request.selector:find(fsys.basename(program),1,true)
     local pathinfo = e and request.selector:sub(e+1,-1) or request.selector
     
