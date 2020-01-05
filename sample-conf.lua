@@ -294,6 +294,10 @@ cgi =
         "third-argument",
       },
       
+      -- ---------------------------------------------
+      -- Additional environment variables per script.
+      -- ---------------------------------------------
+      
       env =
       {
         SAMPLE_CONFIG = "sample.config",
