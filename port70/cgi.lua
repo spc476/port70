@@ -188,7 +188,7 @@ return function(program,cinfo,request)
     
     local _,e    = program:find(cinfo.directory,1,true)
     local script = e and program:sub(e+1,-1) or program
-
+    
     script = request.match[1] .. script
     if no_slash and script:match("^/") then
       script = script:sub(2,-1)
@@ -219,7 +219,7 @@ return function(program,cinfo,request)
         pathinfo = pathinfo:sub(2,-1)
       end
       
-      env.PATH_INFO       = pathinfo
+      env.PATH_INFO = pathinfo
     end
     
     if cwd then
