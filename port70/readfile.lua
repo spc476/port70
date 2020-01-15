@@ -76,7 +76,7 @@ local function execblock(name,file)
   local acc = {}
   
   repeat
-    local line = file:read("*l")
+    local line = file:read("*L")
     table.insert(acc,line)
   until line:match "}Lua"
   
