@@ -21,15 +21,19 @@
 -- ************************************************************************
 -- luacheck: ignore 611
 
-local gtypes = require "org.conman.const.gopher-types"
-local string = require "string"
-local CONF   = require "port70.CONF"
+local gtypes   = require "org.conman.const.gopher-types"
+local string   = require "string"
+local CONF     = require "port70.CONF"
+local safetext = require "port70.safetext"
 
 return function(info)
+  local display = info.display and safetext:match(info.display,1,{})
+                  or ""
+  
   return string.format(
         "%s%s\t%s\t%s\t%d\r\n",
         gtypes[info.type] or gtypes.file,
-        info.display      or "",
+        display,
         info.selector     or "",
         info.host         or CONF.network.host,
         info.port         or CONF.network.port
