@@ -99,6 +99,12 @@ end
 
 return function(filename,ext,info,request)
   filename = cleanpath:match(filename)
+  
+  if not filename then
+    syslog('warning',"readfile() bad cleanpath")
+    return false,'Not found'
+  end
+  
   if fsys.access(filename,"rx") then
     return cgi(filename,info,request)
   end
