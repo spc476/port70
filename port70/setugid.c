@@ -60,11 +60,11 @@ static int setugid(lua_State *L)
   int   id;
   bool  fgid;
   
-  if (lua_type(L,1) == LUA_TNIL)
-    return setugidok(L,"Not electing to switch userid");
-    
   if (getuid() != 0)
     return setugidok(L,"Not running as root---can't switch userid");
+    
+  if (lua_type(L,1) == LUA_TNIL)
+    return setugidok(L,"Not electing to switch userid");
     
   luaL_checktype(L,1,LUA_TTABLE);
   
@@ -92,7 +92,17 @@ static int setugid(lua_State *L)
   id = lua_getfield(L,1,"uid");
   
   if (id == LUA_TNUMBER)
+  {
     uid = lua_tointeger(L,-1);
+    if (!fgid)
+    {
+      struct passwd *pw = getpwuid(uid);
+      if (pw != NULL)
+        gid = pw->pw_gid;
+      else
+        return setugiderr(L,"getpwuid()");
+    }
+  }
   else if (id == LUA_TSTRING)
   {
     struct passwd *pw = getpwnam(lua_tostring(L,-1));
