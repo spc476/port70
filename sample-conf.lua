@@ -117,6 +117,7 @@ handlers =
   
   { selector = "^GET "      , module = "port70.handlers.http" },
   { selector = "^HEAD "     , module = "port70.handlers.http" },
+  { selector = "^POST "     , module = "port70.handlers.http" },
   { selector = "^PUT "      , module = "port70.handlers.http" },
   { selector = "^DELETE "   , module = "port70.handlers.http" },
   { selector = "^CONNECT "  , module = "port70.handlers.http" },
