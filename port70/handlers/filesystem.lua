@@ -34,6 +34,7 @@ local lpeg     = require "lpeg"
 local table    = require "table"
 local ipairs   = ipairs
 local type     = type
+local assert   = assert
 
 _ENV = {}
 magic:flags('mime')
@@ -130,7 +131,10 @@ end
 
 -- ************************************************************************
 
-function handler(info,request)
+function handler(info,request,ios)
+  assert(ios)
+  assert(ios.write)
+  assert(ios._drain)
   local directory = info.directory
   local sep       = ""
   
@@ -142,7 +146,8 @@ function handler(info,request)
   
   for _,segment in descend_path(request.match[2]) do
     if deny(info.no_access,segment) then
-      return false,"Not found"
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      return false
     end
     
     directory = directory .. "/" .. segment
@@ -150,27 +155,30 @@ function handler(info,request)
     sep       = "/"
     
     local finfo,err1 = fsys.stat(directory)
-
+    
     if not finfo then
       syslog('error',"stat(%q) = %s",directory,errno[err1])
-      return false,"Not found"
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      return false
     end
     
     if finfo.mode.type == 'dir' then
       if not fsys.access(directory,"x") then
         syslog('error',"access(%q) failed",directory)
-        return false,"Not found"
+        ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+        return false
       end
     elseif finfo.mode.type == 'file' then
-      return readfile(directory,info.extension,info,request)
+      return readfile(directory,info.extension,info,request,ios)
     else
-      return false,"Not found"
+      ios:write(mklink { type = 'error' , display = "Selector not found"  , selector = request.selector })
+      return false
     end
   end
   
   for _,index in ipairs(info.index) do
     if fsys.access(directory .. "/" .. index,"r") then
-      return readfile(directory .. "/" .. index,info.extension,info,request)
+      return readfile(directory .. "/" .. index,info.extension,info,request,ios)
     end
   end
   
@@ -212,12 +220,11 @@ function handler(info,request)
     return a.selector < b.selector
   end)
   
-  local res = {}
   for _,link in ipairs(links) do
-    table.insert(res,mklink(link))
+    ios:write(mklink(link))
   end
   
-  return true,table.concat(res) .. ".\r\n"
+  return true
 end
 
 -- ************************************************************************

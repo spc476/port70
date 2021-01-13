@@ -152,41 +152,47 @@ local function main(ios)
   end
   
   local selector,search = parserequest:match(request)
-  local text            = mklink { type = 'error' , display = "Selector not found" }
+  local binary          = false
   local okay            = false
-  local selectorp
+  local found           = false
   
   if selector then
     for _,info in ipairs(CONF.handlers) do
       local match = table.pack(selector:match(info.selector))
       if #match > 0 then
+        found     = true
         local req =
         {
           selector = selector,
           search   = search,
           match    = match,
           remote   = ios.__remote,
-          _ios     = ios,
         }
         
-        okay,text,selectorp = info.code.handler(info,req)
+        okay,binary = info.code.handler(info,req,ios)
         
-        if not okay then
-          text = mklink{ type = 'error' , display = text , selector = selectorp or selector }
-        end
         break
       end
     end
+  else
+    ios:write(mklink { type = 'error' , display = "Bad request" , selector = selector })
   end
-    
-  ios:write(text)
+  
+  if not found then
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = selector })
+  end
+  
+  if not binary then
+    ios:write(".\r\n")
+  end
+  
   syslog(
         'info',
         "remote=%s status=%s request=%q bytes=%d",
         ios.__remote.addr,
         tostring(okay),
         request,
-        #text
+        ios.__wbytes
   )
   ios:close()
 end

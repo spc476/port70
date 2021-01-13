@@ -27,8 +27,9 @@ local errno     = require "org.conman.errno"
 local fsys      = require "org.conman.fsys"
 local process   = require "org.conman.process"
 local exit      = require "org.conman.const.exit"
-local ios       = require "org.conman.net.ios"
+local mkios     = require "org.conman.net.ios"
 local nfl       = require "org.conman.nfl"
+local mklink    = require "port70.mklink"
 local io        = require "io"
 local coroutine = require "coroutine"
 
@@ -42,7 +43,7 @@ local DEVNULO = io.open("/dev/null","w")
 -- ************************************************************************
 
 local function fdtoios(fd)
-  local newfd = ios()
+  local newfd = mkios()
   newfd.__fd  = fd
   newfd.__co  = coroutine.running()
   
@@ -82,18 +83,20 @@ end
 
 -- ************************************************************************
 
-return function(program,cinfo,request)
+return function(program,cinfo,request,ios)
   local conf = require "port70.CONF"
   
   if not conf.cgi then
     syslog('error',"CGI script called, but CGI not configured!")
-    return false,"Not found"
+    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    return false
   end
   
   local pipe,err1 = fsys.pipe()
   if not pipe then
     syslog('error',"CGI pipe: %s",errno[err1])
-    return false,"Not found"
+    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    return false
   end
   
   pipe.read:setvbuf('no') -- buffering kills the event loop
@@ -102,7 +105,8 @@ return function(program,cinfo,request)
   
   if not child then
     syslog('error',"process.fork() = %s",errno[err2])
-    return false,"Not found"
+    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    return false
   end
   
   -- =========================================================
@@ -236,29 +240,35 @@ return function(program,cinfo,request)
   
   -- =========================================================
   -- Meanwhile, back at the parent's place ...
+  --
+  -- NOTE: the CGI script is reponsible for sending the final '.' if the
+  -- output is text.
   -- =========================================================
   
   pipe.write:close()
   local inp  = fdtoios(pipe.read)
-  local data = inp:read("a")
+  repeat
+    local data = inp:read(1024)
+    if data then ios:write(data) end
+  until not data
   inp:close()
   
   local info,err4 = process.wait(child)
   
   if not info then
     syslog('error',"process.wait() = %s",errno[err4])
-    return false,"Not found"
+    return true,true
   end
   
   if info.status == 'normal' then
     if info.rc == 0 then
-      return true,data
+      return true,true
     else
       syslog('warning',"program=%q status=%d",program,info.rc)
-      return false,data
+      return true,true
     end
   else
     syslog('error',"program=%q status=%s description=%s",program,info.status,info.description)
-    return false,"Not found"
+    return true,true
   end
 end

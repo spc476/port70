@@ -29,7 +29,7 @@ local safetext = require "port70.safetext"
 return function(info)
   local display = info.display and safetext:match(info.display,1,{})
                   or ""
-  
+                  
   return string.format(
         "%s%s\t%s\t%s\t%d\r\n",
         gtypes[info.type] or gtypes.file,
@@ -39,4 +39,3 @@ return function(info)
         info.port         or CONF.network.port
   )
 end
-

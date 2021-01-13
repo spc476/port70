@@ -41,7 +41,7 @@ end
 
 -- ************************************************************************
 
-function handler(conf,request)
+function handler(conf,request,ios)
   local userdir = getuserdir(request.match[2])
   if not userdir then
     return false,"Not found"
@@ -63,9 +63,9 @@ function handler(conf,request)
     dirext    = conf.dirext,
     no_access = conf.no_access,
   }
-    
+  
   request.match = { request.match[1] .. request.match[2] , request.match[3] }
-  return filesystem.handler(fsconf,request)
+  return filesystem.handler(fsconf,request,ios)
 end
 
 -- ************************************************************************

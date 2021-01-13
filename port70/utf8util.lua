@@ -51,12 +51,12 @@ local cnt  = lpeg.Cf(
                lpeg.Cc(0) * (nc + cutf8 * lpeg.Cc(1))^0,
                function(c) return c + 1 end
              )
-
+             
 -- ************************************************************************
--- Usage:	l = utf8util.len(s)
--- Desc:	Return number of glyph cells that will be displayed
--- Input:	s (string)
--- Return:	l (integer)
+-- Usage:       l = utf8util.len(s)
+-- Desc:        Return number of glyph cells that will be displayed
+-- Input:       s (string)
+-- Return:      l (integer)
 --
 -- Note: This is *NOT* a drop-in replacement for utf8.len()
 -- ************************************************************************
@@ -68,11 +68,11 @@ function len(s,i,j)
 end
 
 -- ************************************************************************
--- Usage:	p = utf8util.offset(s,n)
--- Desc:	Returns position of nth character
--- Input:	s (string)
---		n (integer)
--- Return:	p (integer) byte offset of Nth character
+-- Usage:       p = utf8util.offset(s,n)
+-- Desc:        Returns position of nth character
+-- Input:       s (string)
+--              n (integer)
+-- Return:      p (integer) byte offset of Nth character
 --
 -- NOTE: This is *NOT* a drop-in replacement for utf8.offset()
 -- ************************************************************************

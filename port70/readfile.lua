@@ -35,7 +35,7 @@ local table    = require "table"
 
 local require  = require
 local type     = type
-local ipairs   = ipairs
+local assert   = assert
 
 magic:flags('mime')
 
@@ -72,7 +72,7 @@ end
 
 -- ************************************************************************
 
-local function execblock(name,file)
+local function execblock(name,file,ios)
   local acc = {}
   
   repeat
@@ -81,66 +81,71 @@ local function execblock(name,file)
   until line:match "}Lua"
   
   table.remove(acc)
+  
   local code  = table.concat(acc," ")
   local env   = { require = require }
   local f,err = load(code,name,"t",env)
+  
   if not f then
     syslog('error',"%s: %s",name,err)
-    return mklink {
+    ios:write(mklink {
         type = 'info',
         display = "Nothing in particular right now"
-    }
+    })
+  else
+    local data = f()
+    if type(data) == 'table' then
+      ios:write(table.concat(data,"\r\n"))
+    else
+      ios:write(data)
+    end
   end
-  
-  return f()
 end
 
 -- ************************************************************************
 
-return function(filename,ext,info,request)
+return function(filename,ext,info,request,ios)
+  assert(ios)
+  assert(ios.write)
+  assert(ios._drain)
+  
   filename = cleanpath:match(filename)
   
   if not filename then
     syslog('warning',"readfile() bad cleanpath")
-    return false,'Not found'
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    return false
   end
   
   if fsys.access(filename,"rx") then
-    return cgi(filename,info,request)
+    return cgi(filename,info,request,ios)
   end
   
   if filename:match(ext) then
     local file = io.open(filename,"r")
     if not file then
-      return false,'Not found'
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      return false
     end
     
-    local acc = {}
     for line in file:lines() do
       local gtype,selector,display = parseline:match(line)
       if gtype == 'url' then
         local uri = url:match(selector)
         if uri.scheme == 'gopher' then
           uri.display = display
-          table.insert(acc,mklink(uri))
+          ios:write(mklink(uri))
         else
-          table.insert(acc,mklink {
+          ios:write(mklink {
                 type     = 'html',
                 display  = display,
                 selector = "URL:" .. selector
           })
         end
       elseif gtype == 'Lua{' then
-        local data = execblock(filename,file)
-        if type(data) == 'table' then
-          for _,line2 in ipairs(data) do
-            table.insert(acc,line2)
-          end
-        else
-          table.insert(acc,data)
-        end
+        execblock(filename,file,ios)
       else
-        table.insert(acc,mklink {
+        ios:write(mklink {
                 type     = gtype,
                 display  = display,
                 selector = selector
@@ -149,33 +154,42 @@ return function(filename,ext,info,request)
     end
     
     file:close()
-    return true,table.concat(acc) .. ".\r\n"
+    return true
   end
   
   local mime = mimetype:match(magic(filename))
+  
   if mime.type:match "^text/" then
     local file,err = io.open(filename,"r")
     if not file then
       syslog('error',"io.open(%q) = %s",filename,err)
-      return false,'Not found'
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      return false
     end
     
-    local acc = {}
     for line in file:lines() do
-      table.insert(acc,line)
+      ios:write(line,"\r\n")
     end
     
     file:close()
-    return true,table.concat(acc,"\r\n") .. "\r\n.\r\n"
+    return true
     
   else
-    local file = io.open(filename,"rb")
+    local file,err = io.open(filename,"rb")
     if not file then
-      return false,'Not found'
+      syslog('error',"io.open(%q) = %s",filename,err)
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      return false
     end
     
-    local data = file:read("*a")
+    repeat
+      local data = file:read(1024)
+      if data then
+        ios:write(data)
+      end
+    until not data
+    
     file:close()
-    return true,data
+    return true,true
   end
 end

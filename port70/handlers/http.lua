@@ -60,13 +60,14 @@ local document = "I'm a little teapot\r\n"
               .. "     I'm a gopher server.\r\n"
               .. "     Get with the times.\r\n"
               .. "\r\n"
-
+              
 -- ***********************************************************************
 
-function handler(_,request)
+function handler(_,request,ios)
   repeat local line = request._ios:read("l") until line == ""
   local hdr = string.format(header,os.date("!%a, %d %b %Y %H:%M:%S GMT"),#document)
-  return true,hdr .. document
+  ios:write(hdr,document)
+  return true,true
 end
 
 -- ***********************************************************************

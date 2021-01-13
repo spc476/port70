@@ -29,15 +29,15 @@ local tostring = tostring
 _ENV = {}
 
 -- ************************************************************************
--- Usage:	okay[,err] = sample.init(conf)
--- Desc:	Do any initialization of the module
--- Input:	conf (table) configuration block from configuration file
--- Return:	okay (boolean) true if okay, false if any error
---		err (string) error message
+-- Usage:       okay[,err] = sample.init(conf)
+-- Desc:        Do any initialization of the module
+-- Input:       conf (table) configuration block from configuration file
+-- Return:      okay (boolean) true if okay, false if any error
+--              err (string) error message
 --
--- NOTE:	This function is optional.
---		Also, any information local to an instance can be stored
---		in the passed in configuration block.
+-- NOTE:        This function is optional.
+--              Also, any information local to an instance can be stored
+--              in the passed in configuration block.
 -- ************************************************************************
 
 function init(conf)
@@ -46,46 +46,47 @@ function init(conf)
 end
 
 -- ************************************************************************
--- Usage:	okay,text[,selectorp] = sample.handler(conf,request)
--- Desc:	Return content for a given selector
--- Input:	conf (table) configuration block
+-- Usage:       okay[,binary] = sample.handler(conf,request,ios)
+-- Desc:        Return content for a given selector
+-- Input:       conf (table) configuration block
 --              request (table) request---table with following fields:
---			* selector (string) requested selector
---			* search (string) search string (if any)
---			* match (array/string) results of matched selector
---			* remote (userdata/address) remote address
--- Return:	okay (boolean) true if okay, false if error
---		text (string) content if true, error message otherwise
---		selectorp (string/optional) selector to use for errors
+--                      * selector (string) requested selector
+--                      * search (string) search string (if any)
+--                      * match (array/string) results of matched selector
+--                      * remote (userdata/address) remote address
+--              ios (table/object) input/output stream
+-- Return:      okay (boolean) true if okay, false if error
+--		binary (boolean/optional) true if output is binary,
+--			| false if text
 -- ************************************************************************
 
-function handler(conf,request)
-  return true,string.format([[
+function handler(conf,request,ios)
+  ios:write(string.format([[
 conf.module=%q
 conf.selector=%q
 match=%q
 search=%q
 selector=%q"
 remote=%s
-.
 ]],
-	conf.module,
-	conf.selector,
-	request.match[1],
-	request.search or "",
-	request.selector,
-	tostring(request.remote)
-  )
+        conf.module,
+        conf.selector,
+        request.match[1],
+        request.search or "",
+        request.selector,
+        tostring(request.remote)
+  ))
+  return true
 end
 
 -- ************************************************************************
--- Usage:	okay[,err] = sample.fini(conf)
--- Desc:	Cleanup resources for module
--- Input:	conf (table) configuration block
--- Return:	okay (boolean) true if okay, false otherwise
---		err (string/optional) error message
+-- Usage:       okay[,err] = sample.fini(conf)
+-- Desc:        Cleanup resources for module
+-- Input:       conf (table) configuration block
+-- Return:      okay (boolean) true if okay, false otherwise
+--              err (string/optional) error message
 --
--- NOTE:	This function is optional.
+-- NOTE:        This function is optional.
 -- ************************************************************************
 
 function fini(conf)

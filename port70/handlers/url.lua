@@ -47,8 +47,9 @@ site.
 </HTML>
 ]]
 
-function handler(_,request)
-  return true,document:gsub("LINK",request.match[1])
+function handler(_,request,ios)
+  ios:write(document:gsub("LINK",request.match[1]))
+  return true
 end
 
 return _ENV

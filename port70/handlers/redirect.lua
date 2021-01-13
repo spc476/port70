@@ -23,6 +23,7 @@
 -- luacheck: ignore 611
 
 local lpeg     = require "lpeg"
+local mklink   = require "port70.mklink"
 local tonumber = tonumber
 
 _ENV = {}
@@ -41,10 +42,13 @@ end
 
 -- ************************************************************************
 
-function handler(conf,request)
-  return false,
-         conf.redirect.type,
-         redirect_subst:match(conf.redirect.selector,1,request.match)
+function handler(conf,request,ios)
+  ios:write(mklink {
+        type     = 'error',
+        display  = conf.redirect.type,
+        selector = redirect_subst:match(conf.redirect.selector,1,request.match)
+  })
+  return false
 end
 
 -- ************************************************************************
