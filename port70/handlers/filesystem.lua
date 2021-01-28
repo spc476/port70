@@ -37,7 +37,6 @@ local type     = type
 local assert   = assert
 
 _ENV = {}
-magic:flags('mime')
 
 -- ************************************************************************
 

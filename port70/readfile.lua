@@ -37,8 +37,6 @@ local require  = require
 local type     = type
 local assert   = assert
 
-magic:flags('mime')
-
 -- ************************************************************************
 
 local parseline do
