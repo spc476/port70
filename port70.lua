@@ -26,12 +26,14 @@ local nfl     = require "org.conman.nfl"
 local tcp     = require "org.conman.nfl.tcp"
 local exit    = require "org.conman.const.exit"
 local magic   = require "org.conman.fsys.magic"
+local seed    = require "org.conman.math".seed
 local lpeg    = require "lpeg"
 local setugid = require "port70.setugid"
 
 local CONF = {}
 
 magic:flags("mime")
+math.randomseed(seed())
 
 -- ************************************************************************
 
