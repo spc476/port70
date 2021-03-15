@@ -87,15 +87,15 @@ return function(program,cinfo,request,ios)
   local conf = require "port70.CONF"
   
   if not conf.cgi then
-    syslog('error',"CGI script called, but CGI not configured!")
-    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    syslog('error',"CGI script %q called, but CGI not configured!",program)
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
     return false
   end
   
   local pipe,err1 = fsys.pipe()
   if not pipe then
     syslog('error',"CGI pipe: %s",errno[err1])
-    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
     return false
   end
   
@@ -105,7 +105,7 @@ return function(program,cinfo,request,ios)
   
   if not child then
     syslog('error',"process.fork() = %s",errno[err2])
-    ios.write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
     return false
   end
   
