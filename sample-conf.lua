@@ -172,23 +172,6 @@ handlers =
   },
   
   -- --------------------------------------------------------------------
-  -- The experimental redirection handler.  This can be useful, and I hope
-  -- it catches on.  Basically, for any matches, this module will return
-  -- an error, with the given text ("Permanent redirect") and the location
-  -- where the resource has moved to (the type shall not change).
-  -- --------------------------------------------------------------------
-  
-  {
-    selector = "^oldpath/(.*)",
-    module   = "port70.handlers.redirect",
-    redirect =
-    {
-      type     = "Permanent redirect", -- should be this exact text
-      selector = "newpath/$1"          -- capture reference
-    },
-  },
-  
-  -- --------------------------------------------------------------------
   -- The sample handler.  This just exists to give you a skeleton of a
   -- handler to work from.
   -- --------------------------------------------------------------------
