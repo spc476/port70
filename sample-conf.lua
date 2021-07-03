@@ -61,9 +61,9 @@ user =
 -- These handle all requests.  The configuration options are entirely
 -- dependant upon the handler---the only required configuration options per
 -- handler are the 'selector' field and the 'module' field, which defines
--- the codebase for the handler.  The selector fields are Lua patterns
--- matched against the request, in the order as they appear in this list,
--- and the first one wins.
+-- the codebase for the handler.  The selector fields match the *beginning*
+-- of the selector; the rest of the selector is then passed to the nandler.
+-- The first handler that matches is the one that handles the request.
 -- ************************************************************************
 
 handlers =
@@ -75,31 +75,28 @@ handlers =
   -- -------------------------------------------------------------------
   
   {
-    selector = "^/motd$",
+    selector = "/motd",
     module   = "port70.handlers.file",
     file     = "/etc/motd", --required
   },
   
   -- ----------------------------------------------------------------
   -- The user directory handler, allowing individual users of the computer
-  -- to serve up gopher content.  The pattern defines three captures:
+  -- to serve up gopher content.  The rest of the selector is assumed to be
+  -- of the form "[^/]+/.*"---that is, the username starts the path, and is
+  -- delimeted by a '/' character.
   --
-  --    1. The base of the selector
-  --    2. The username
-  --    3. The rest of the selector
-  --
-  -- All three patterns are required.  The directory field is the
-  -- subdirectory underneath the users $HOME that is served up.  The index
-  -- field are a list of files that will be considered "index" files and
-  -- served up; if one isn't provided, one will be constructed.  The
-  -- extension field gives the exention used for the port70-specific index
-  -- format (which is different than a traditional gopher index).  The
-  -- no_access field is a list of patterns for each filename that will NOT
-  -- be served up.
+  -- The directory field is the subdirectory underneath the users $HOME that
+  -- is served up.  The index field are a list of files that will be
+  -- considered "index" files and served up; if one isn't provided, one will
+  -- be constructed.  The extension field gives the exention used for the
+  -- port70-specific index format (which is different than a traditional
+  -- gopher index).  The no_access field is a list of patterns for each
+  -- filename that will NOT be served up.
   -- --------------------------------------------------------------------------
   
   {
-    selector  = "^(/~)([^/]+)(.*)",
+    selector  = "/~",
     module    = "port70.handlers.userdir",
     directory = "public_gopher",                     -- optional
     index     = { "index.port70" , "index.gopher" }, -- optional
@@ -115,17 +112,17 @@ handlers =
   -- we aren't a web server but a tea pot.
   -- --------------------------------------------------------------------
   
-  { selector = "^GET "      , module = "port70.handlers.http" },
-  { selector = "^HEAD "     , module = "port70.handlers.http" },
-  { selector = "^POST "     , module = "port70.handlers.http" },
-  { selector = "^PUT "      , module = "port70.handlers.http" },
-  { selector = "^DELETE "   , module = "port70.handlers.http" },
-  { selector = "^CONNECT "  , module = "port70.handlers.http" },
-  { selector = "^OPTIONS "  , module = "port70.handlers.http" },
-  { selector = "^TRACE "    , module = "port70.handlers.http" },
-  { selector = "^BREW "     , module = "port70.handlers.http" }, -- RFC-2324, in case people get cute
-  { selector = "^PROPFIND " , module = "port70.handlers.http" },
-  { selector = "^WHEN "     , module = "port70.handlers.http" },
+  { selector = "GET "      , module = "port70.handlers.http" },
+  { selector = "HEAD "     , module = "port70.handlers.http" },
+  { selector = "POST "     , module = "port70.handlers.http" },
+  { selector = "PUT "      , module = "port70.handlers.http" },
+  { selector = "DELETE "   , module = "port70.handlers.http" },
+  { selector = "CONNECT "  , module = "port70.handlers.http" },
+  { selector = "OPTIONS "  , module = "port70.handlers.http" },
+  { selector = "TRACE "    , module = "port70.handlers.http" },
+  { selector = "BREW "     , module = "port70.handlers.http" }, -- RFC-2324, in case people get cute
+  { selector = "PROPFIND " , module = "port70.handlers.http" },
+  { selector = "WHEN "     , module = "port70.handlers.http" },
   
   -- ---------------------------------------------------------------------
   -- URL handler.  If a gopher client doesn't understand the URL: marker
@@ -134,7 +131,7 @@ handlers =
   -- ---------------------------------------------------------------------
   
   {
-   selector = "^URL:(.*)",
+   selector = "URL:",
    module   = "port70.handlers.url",
   },
   
@@ -161,7 +158,7 @@ handlers =
   -- --------------------------------------------------------------------
   
   {
-    selector = "^sample/(.*)",
+    selector = "sample/",
     module   = "port70.handlers.sample",
   },
   
@@ -182,7 +179,7 @@ handlers =
   -- -----------------------------------------------------------------------
   
   {
-    selector  = "^(/archive)(/.*)",
+    selector  = "/archive",
     module    = "port70.handlers.filesystem",
     directory = "/usr/src/archive",                  -- required
     index     = { "index.port70" , "index.gopher" }, -- optional
@@ -195,7 +192,7 @@ handlers =
   },
   
   {
-    selector  = ".*",
+    selector  = "",
     module    = "port70.handlers.filesystem",
     directory = "share",                             -- required,
     index     = { "index.port70" , "index.gopher" }, -- optional
@@ -275,7 +272,9 @@ cgi =
   
   -- -------------------------------------------------------------------
   -- The instance block allows you to define values per CGI script and
-  -- will override any global settings.
+  -- will override any global settings.  The script is defined as a Lua
+  -- pattern, so that they'll apply to any script whose name matches
+  -- the pattern.
   -- -------------------------------------------------------------------
   
   instance =

@@ -29,7 +29,7 @@ network =
 handlers =
 {
   {
-    selector  = ".*",
+    selector  = "",
     module    = "port70.handlers.filesystem",
     directory = "share", -- change as needed
   }
