@@ -42,7 +42,12 @@ end
 -- ************************************************************************
 
 function handler(conf,request,ios)
-  local userdir = getuserdir(request.match[2])
+  local user,path = request.rest:match("^([^/]+)(.*)")
+  if not user or user == "" then
+    return false,"Not found"
+  end
+  
+  local userdir = getuserdir(user)
   if not userdir then
     return false,"Not found"
   end
@@ -56,6 +61,7 @@ function handler(conf,request,ios)
   local fsconf =
   {
     path      = conf.path,
+    selector  = conf.selector .. user,
     module    = "port70.handlers.filesystem",
     directory = userdir,
     index     = conf.index,
@@ -64,7 +70,8 @@ function handler(conf,request,ios)
     no_access = conf.no_access,
   }
   
-  request.match = { request.match[1] .. request.match[2] , request.match[3] }
+  request.selector = fsconf.selector
+  request.rest     = path
   return filesystem.handler(fsconf,request,ios)
 end
 

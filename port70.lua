@@ -163,19 +163,18 @@ local function main(ios)
   
   if selector then
     for _,info in ipairs(CONF.handlers) do
-      local match = table.pack(selector:match(info.selector))
-      if #match > 0 then
+      if selector:sub(1,#info.selector) == info.selector then
         found     = true
         local req =
         {
-          selector = selector,
+          selector = info.selector,
+          rest     = selector:sub(#info.selector + 1,-1),
           search   = search,
-          match    = match,
           remote   = ios.__remote,
         }
         
+        syslog('debug',"selector=%s rest=%q",req.selector,req.rest)
         okay,binary = info.code.handler(info,req,ios)
-        
         break
       end
     end

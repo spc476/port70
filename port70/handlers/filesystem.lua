@@ -20,7 +20,7 @@
 --
 -- ************************************************************************
 -- luacheck: globals init handler
--- luacheck: ignore 611
+-- luacheck: ignore 611 631
 
 local mimetype = require "org.conman.parsers.mimetype"
 local magic    = require "org.conman.fsys.magic"
@@ -137,15 +137,11 @@ function handler(info,request,ios)
   local directory = info.directory
   local sep       = ""
   
-  if #request.match == 1 then
-    table.insert(request.match,1,"")
-  end
+  local selector = info.selector
   
-  local selector = request.match[1]
-  
-  for _,segment in descend_path(request.match[2]) do
+  for _,segment in descend_path(request.rest) do
     if deny(info.no_access,segment) then
-      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector .. request.rest })
       return false
     end
     
@@ -157,20 +153,20 @@ function handler(info,request,ios)
     
     if not finfo then
       syslog('error',"stat(%q) = %s",directory,errno[err1])
-      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+      ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector .. request.rest  })
       return false
     end
     
     if finfo.mode.type == 'dir' then
       if not fsys.access(directory,"x") then
         syslog('error',"access(%q) failed",directory)
-        ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+        ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector .. request.rest })
         return false
       end
     elseif finfo.mode.type == 'file' then
       return readfile(directory,info.extension,info,request,ios)
     else
-      ios:write(mklink { type = 'error' , display = "Selector not found"  , selector = request.selector })
+      ios:write(mklink { type = 'error' , display = "Selector not found"  , selector = request.selector .. request.rest  })
       return false
     end
   end

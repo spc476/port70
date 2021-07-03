@@ -48,7 +48,7 @@ site.
 ]]
 
 function handler(_,request,ios)
-  ios:write(document:gsub("LINK",request.match[1]))
+  ios:write((document:gsub("LINK",request.rest)))
   return true
 end
 

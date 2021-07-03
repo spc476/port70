@@ -159,7 +159,7 @@ return function(program,cinfo,request,ios)
     
     if conf.cgi.instance then
       for name,info in pairs(conf.cgi.instance) do
-        if request.selector:match(name) then
+        if request.rest:match(name) then
           if info.cwd then cwd = info.cwd end
           
           -- ---------------------------------------------------------------
@@ -193,32 +193,30 @@ return function(program,cinfo,request,ios)
     local _,e    = program:find(cinfo.directory,1,true)
     local script = e and program:sub(e+1,-1) or program
     
-    script = request.match[1] .. script
     if no_slash and script:match("^/") then
       script = script:sub(2,-1)
     end
     
     env.GOPHER_DOCUMENT_ROOT   = cinfo.directory
     env.GOPHER_SCRIPT_FILENAME = program
-    env.GOPHER_SELECTOR        = request.selector
+    env.GOPHER_SELECTOR        = request.selector .. request.rest
     env.GATEWAY_INTERFACE      = "CGI/1.1"
     env.QUERY_STRING           = request.search or ""
     env.REMOTE_ADDR            = request.remote.addr
     env.REMOTE_HOST            = request.remote.addr
     env.REQUEST_METHOD         = ""
-    env.SCRIPT_NAME            = script
+    env.SCRIPT_NAME            = request.selector .. "/" .. script
     env.SERVER_NAME            = conf.network.host
     env.SERVER_PORT            = conf.network.port
     env.SERVER_PROTOCOL        = "GOPHER"
     env.SERVER_SOFTWARE        = "port70"
     
-    _,e = request.selector:find(fsys.basename(program),1,true)
-    local pathinfo = e and request.selector:sub(e+1,-1) or request.selector
-    
+    _,e = request.rest:find(fsys.basename(program),1,true)
+    local pathinfo = e and request.rest:sub(e+1,-1) or request.selector
     if pathinfo ~= "" then
-      env.PATH_TRANSLATED = env.GOPHER_DOCUMENT_ROOT .. pathinfo
+      env.PATH_TRANSLATED = env.GOPHER_DOCUMENT_ROOT .. request.rest
+      pathinfo            = pathinfo .. request.rest
       
-      pathinfo = request.match[1] .. pathinfo
       if no_slash and pathinfo:match("^/") then
         pathinfo = pathinfo:sub(2,-1)
       end

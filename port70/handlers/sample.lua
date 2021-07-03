@@ -41,7 +41,7 @@ _ENV = {}
 -- ************************************************************************
 
 function init(conf)
-  syslog('debug',"init(%s) selector pattern=%q",conf.module,conf.selector)
+  syslog('debug',"%s: selector=%q",conf.module,conf.selector)
   return true
 end
 
@@ -51,9 +51,8 @@ end
 -- Input:       conf (table) configuration block
 --              request (table) request---table with following fields:
 --                      * selector (string) requested selector
+--			* rest (string) text after requested selector
 --                      * search (string) search string (if any)
---                      * match (array/string) results of matched selector
---                      * remote (userdata/address) remote address
 --              ios (table/object) input/output stream
 -- Return:      okay (boolean) true if okay, false if error
 --		binary (boolean/optional) true if output is binary,
@@ -64,17 +63,17 @@ function handler(conf,request,ios)
   ios:write(string.format([[
 conf.module=%q
 conf.selector=%q
-match=%q
-search=%q
-selector=%q"
+selector=%q
+rest=%q
+search=%q"
 remote=%s
 ]],
         conf.module,
         conf.selector,
-        request.match[1],
-        request.search or "",
         request.selector,
-        tostring(request.remote)
+        request.rest,
+        request.search or "",
+        tostring(ios.__remote)
   ))
   return true
 end
