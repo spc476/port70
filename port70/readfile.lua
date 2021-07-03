@@ -116,7 +116,6 @@ return function(filename,ext,info,request,ios)
   end
   
   if fsys.access(filename,"rx") then
-    syslog('debug',"selector=%s rest=%s",request.selector,request.rest)
     return cgi(filename,info,request,ios)
   end
   

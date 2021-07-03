@@ -220,7 +220,6 @@ local function main(ios)
             remote   = ios.__remote,
           }
           
-          syslog('debug',"selector=%s rest=%q",req.selector,req.rest)
           okay,binary = info.code.handler(info,req,ios)
           break
         end
