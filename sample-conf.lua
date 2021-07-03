@@ -19,7 +19,7 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
--- luacheck: globals network syslog no_access user handlers cgi
+-- luacheck: globals network syslog no_access user redirect handlers cgi
 -- luacheck: ignore 611
 
 -- ************************************************************************
@@ -53,6 +53,42 @@ user =
 {
   uid = 'gopher',
   gid = 'gopher', -- optional, defaults to group of supplied user
+}
+
+-- ************************************************************************
+-- Experimental Redirection for gopher.  This replaces the earlier redirect
+-- module I had.  The new method is a bit more flexible, as it can deal with
+-- both permament redirections and selectors that are no longer valid
+-- (gone).
+--
+-- So, before any handlers are checked, requests are filtered through these
+-- redirection blocks.  The first is the permanent block, then the gone
+-- block.  The format for the permanent block is a Lua pattern, then a
+-- redirection location where "$1" will be replaced with the first capture,
+-- "$2" with the second capture and so on.  This will return a gopher error
+-- with the display string of "Permanent redirect" and the new selector to
+-- use.
+   
+-- The gone block is just a pattern to match against; there is no
+-- substitution required, as we're not really directing anywhere.  This will
+-- return a gopher error with the display string of "Gone" with the original
+-- selector.
+-- ************************************************************************
+
+redirect =
+{
+  permanent =
+  {
+    { "^/oldselector/(.*)"   , "/newselector/$1" },
+    { "^/old/(.*)/(.*)/(.*)" , "/new/$1-$2-$2"   }
+  },
+  
+  gone =
+  {
+    "^/no%-longer%-here$",
+    "^/this_is_gone_as_well$",
+    "^/obsolete(.*)"
+  }
 }
 
 -- ************************************************************************
@@ -192,7 +228,7 @@ handlers =
   },
   
   {
-    selector  = "",
+    selector  = "", -- matches everything else
     module    = "port70.handlers.filesystem",
     directory = "share",                             -- required,
     index     = { "index.port70" , "index.gopher" }, -- optional

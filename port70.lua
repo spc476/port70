@@ -74,6 +74,13 @@ do
     CONF.network.port = 70
   end
   
+  if not CONF.redirect then
+    CONF.redirect = { permanent = {} , gone = {} }
+  else
+    CONF.redirect.permanent = CONF.redirect.permanent or {}
+    CONF.redirect.gone      = CONF.redirect.gone      or {}
+  end
+  
   package.loaded['port70.CONF'] = CONF
   
   if not CONF.handlers then
@@ -138,6 +145,43 @@ local mklink = require "port70.mklink" -- XXX hack
 
 -- ************************************************************************
 
+local redirect_subst do
+  local replace  = lpeg.C(lpeg.P"$" * lpeg.R"09") * lpeg.Carg(1)
+                 / function(c,t)
+                     c = tonumber(c:sub(2,-1))
+                     return t[c]
+                   end
+  local char     = replace + lpeg.P(1)
+  redirect_subst = lpeg.Cs(char^1)
+end
+
+local function redirect(ios,selector)
+  for _,rule in ipairs(CONF.redirect.permanent) do
+    local match = table.pack(selector:match(rule[1]))
+    if #match > 0 then
+      ios:write(mklink {
+                type     = 'error',
+                display  = "Permanent redirect",
+                selector = redirect_subst:match(rule[2],1,match)
+                })
+      return true
+    end
+  end
+  
+  for _,pattern in ipairs(CONF.redirect.gone) do
+    if selector:match(pattern) then
+      ios:write(mkilnk {
+                type     = 'error',
+                display  = "Gone",
+                selector = selector
+        })
+      return true
+    end
+  end
+end
+
+-- ************************************************************************
+
 local parserequest = lpeg.C(lpeg.R" ~"^0)
                    * (lpeg.P"\t" * lpeg.C(lpeg.R" ~"^1))^-1
                    * lpeg.P(-1)
@@ -162,20 +206,24 @@ local function main(ios)
   local found           = false
   
   if selector then
-    for _,info in ipairs(CONF.handlers) do
-      if selector:sub(1,#info.selector) == info.selector then
-        found     = true
-        local req =
-        {
-          selector = info.selector,
-          rest     = selector:sub(#info.selector + 1,-1),
-          search   = search,
-          remote   = ios.__remote,
-        }
-        
-        syslog('debug',"selector=%s rest=%q",req.selector,req.rest)
-        okay,binary = info.code.handler(info,req,ios)
-        break
+    if redirect(ios,selector) then
+      found = true -- but it's been moved, or it's gone
+    else
+      for _,info in ipairs(CONF.handlers) do
+        if selector:sub(1,#info.selector) == info.selector then
+          found     = true
+          local req =
+          {
+            selector = info.selector,
+            rest     = selector:sub(#info.selector + 1,-1),
+            search   = search,
+            remote   = ios.__remote,
+          }
+          
+          syslog('debug',"selector=%s rest=%q",req.selector,req.rest)
+          okay,binary = info.code.handler(info,req,ios)
+          break
+        end
       end
     end
   else
