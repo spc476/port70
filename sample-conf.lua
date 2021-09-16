@@ -143,6 +143,16 @@ handlers =
     },
   },
   
+  -- -----------------------------------------------------------------
+  -- The content handler---for when a file is just too much overhead.
+  -- -----------------------------------------------------------------
+  
+  {
+    selector = "/hello.txt",
+    module   = "port70.handlers.content",
+    content  = "Hello, world!\r\n",
+  },
+  
   -- --------------------------------------------------------------------
   -- The HTTP handler---a way to tell those pesky web robots to go away,
   -- we aren't a web server but a tea pot.
