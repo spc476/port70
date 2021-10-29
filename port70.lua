@@ -136,7 +136,15 @@ do
     info.code = mod
   end
   
-  for _,info in ipairs(CONF.handlers) do
+  table.sort(CONF.handlers,function(a,b)
+    return #a.selector == #b.selector and a.selector < b.selector
+        or #a.selector > #b.selector
+  end)
+  
+  for i,info in ipairs(CONF.handlers) do
+    if i < #CONF.handlers and info.selector == CONF.handlers[i+1].selector then
+      syslog('warning',"duplicate selector %q found",info.selector)
+    end
     loadmodule(info)
   end
 end
