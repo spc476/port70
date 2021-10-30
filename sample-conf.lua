@@ -236,7 +236,7 @@ handlers =
 -- ************************************************************************
 -- CGI definition block, optional
 --
--- Any file foudn with the executable bit set is considered a CGI script and
+-- Any file found with the executable bit set is considered a CGI script and
 -- will be executed as such.  This module implements the CGI standard as
 -- defined in RFC-3875 with some deviations due to the semantics of gopher.
 -- The script will be executed and any output will be sent to the client.
