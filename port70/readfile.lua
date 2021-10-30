@@ -115,7 +115,7 @@ return function(filename,ext,info,request,ios)
     return false
   end
   
-  if fsys.access(filename,"rx") then
+  if info.cgi and fsys.access(filename,"rx") then
     return cgi(filename,info,request,ios)
   end
   

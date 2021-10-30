@@ -205,6 +205,9 @@ handlers =
   --
   -- The extension field is the extension used for special processing
   -- of an index file.
+  --
+  -- the cgi field enables CGI scripts.  You will also need to configure
+  -- the CGI handler block (see below).
   -- -----------------------------------------------------------------------
   
   {
@@ -214,6 +217,7 @@ handlers =
     index     = { "index.port70" , "index.gopher" }, -- optional
     dirext    = { ".port70" , ".gopher" },           -- optional
     extension = ".port70",                           -- optional
+    cgi       = false,                               -- optional
     no_access =                                      -- optional
     {
       "^%.",
@@ -226,6 +230,7 @@ handlers =
     directory = "share",                             -- required,
     index     = { "index.port70" , "index.gopher" }, -- optional
     extension = ".port70",                           -- optional
+    cgi       = true,                                -- optional
     no_access =                                      -- optional
     {
       "^%.",
@@ -236,14 +241,15 @@ handlers =
 -- ************************************************************************
 -- CGI definition block, optional
 --
--- Any file found with the executable bit set is considered a CGI script and
--- will be executed as such.  This module implements the CGI standard as
--- defined in RFC-3875 with some deviations due to the semantics of gopher.
--- The script will be executed and any output will be sent to the client.
--- The script SHOULD NOT include the standard CGI header output as that does
--- not make semantic sense for gopher.  The output SHOULD be what a gopher
--- client is expecting per the selector type.  The following environment
--- variables will be defined:
+-- Any file found with the executable bit set and the cgi field in the
+-- handler definition block is true, is considered a CGI script and will be
+-- executed as such.  This module implements the CGI standard as defined in
+-- RFC-3875 with some deviations due to the semantics of gopher.  The script
+-- will be executed and any output will be sent to the client.  The script
+-- SHOULD NOT include the standard CGI header output as that does not make
+-- semantic sense for gopher.  The output SHOULD be what a gopher client is
+-- expecting per the selector type.  The following environment variables
+-- will be defined:
 --
 -- GATEWAY_INTERFACE    Will be set to "CGI/1.1"
 -- PATH_INFO            May be set (see RFC-3875 for details)
