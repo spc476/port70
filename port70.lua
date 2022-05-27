@@ -178,7 +178,7 @@ local function redirect(ios,selector)
   
   for _,pattern in ipairs(CONF.redirect.gone) do
     if selector:match(pattern) then
-      ios:write(mkilnk {
+      ios:write(mklink {
                 type     = 'error',
                 display  = "Gone",
                 selector = selector
