@@ -36,6 +36,7 @@ local table    = require "table"
 local require  = require
 local type     = type
 local assert   = assert
+local pcall    = pcall
 
 -- ************************************************************************
 
@@ -91,11 +92,15 @@ local function execblock(name,file,ios)
         display = "Nothing in particular right now"
     })
   else
-    local data = f()
-    if type(data) == 'table' then
-      ios:write(table.concat(data,"\r\n"))
+    local okay,data = pcall(f)
+    if not okay then
+      syslog('error',"name=%q err=%q",name,data)
     else
-      ios:write(data)
+      if type(data) == 'table' then
+        ios:write(table.concat(data,"\r\n"))
+      else
+        ios:write(data)
+      end
     end
   end
 end
