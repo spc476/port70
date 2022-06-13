@@ -25,15 +25,11 @@ local signal  = require "org.conman.signal"
 local nfl     = require "org.conman.nfl"
 local tcp     = require "org.conman.nfl.tcp"
 local exit    = require "org.conman.const.exit"
-local magic   = require "org.conman.fsys.magic"
-local seed    = require "org.conman.math".seed
 local lpeg    = require "lpeg"
 local setugid = require "port70.setugid"
 
-local CONF = {}
-
-magic:flags("mime")
-math.randomseed(seed())
+math.randomseed(require("org.conman.math").seed())
+require("org.conman.fsys.magic"):flags('mime')
 
 -- ************************************************************************
 
@@ -42,7 +38,7 @@ if #arg == 0 then
   os.exit(exit.USAGE,true)
 end
 
-do
+local CONF = {} do
   local conf,err = loadfile(arg[1],"t",CONF)
   if not conf then
     io.stderr:write(string.format("%s: %s\n",arg[1],err))
