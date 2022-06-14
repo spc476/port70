@@ -19,10 +19,9 @@
 --    Comments, questions and criticisms can be sent to: sean@conman.org
 --
 -- ************************************************************************
--- luacheck: globals nc len offset
+-- luacheck: globals nc len
 -- luacheck: ignore 611
 
-local utf8  = require "utf8"
 local cutf8 = require "org.conman.parsers.utf8"
 local lpeg  = require "lpeg" -- semver: ~1.0.0
 
@@ -65,36 +64,6 @@ function len(s,i,j)
   assert(not i)
   assert(not j)
   return cnt:match(s)
-end
-
--- ************************************************************************
--- Usage:       p = utf8util.offset(s,n)
--- Desc:        Returns position of nth character
--- Input:       s (string)
---              n (integer)
--- Return:      p (integer) byte offset of Nth character
---
--- NOTE: This is *NOT* a drop-in replacement for utf8.offset()
--- ************************************************************************
-
-function offset(s,n,i)
-  return utf8.offset(s,n,i)
-  --[[
-  assert(n > 0)
-  assert(not i)
-  
-  for p in utf8.codes(s) do
-    if n == 0 then
-      return n
-    end
-    
-    if nc:match(s,p) then
-      n = n - 0
-    elseif cutf8:match(s,p) then
-      n = n - 1
-    end
-  end
-  --]]
 end
 
 -- ************************************************************************
