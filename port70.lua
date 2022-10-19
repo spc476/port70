@@ -59,6 +59,7 @@ local CONF = {} do
   if not CONF.network
   or not CONF.network.host then
     syslog('critical',"%s: missing or bad network configuration",arg[1])
+    io.stderr:write(string.format("%s: missing or bad network configuration",arg[1]),"\n")
     os.exit(exit.CONFIG,true)
   end
   
@@ -79,8 +80,10 @@ local CONF = {} do
   
   package.loaded['port70.CONF'] = CONF
   
-  if not CONF.handlers then
-    CONF.handlers = { }
+  if not CONF.handlers or #CONF.handlers == 0 then
+    syslog('critical',"%s: at least one handler needs to be defined",arg[1])
+    io.stderr:write(string.format("%s: at least one handler needs to be defined",arg[1]),"\n")
+    os.exit(exit.CONFIG,true)
   end
   
   local function loadmodule(info)
@@ -89,14 +92,16 @@ local CONF = {} do
     end
     
     if not info.selector then
-      syslog('error',"missing path field in handler")
-      info.path = ""
+      syslog('error',"%q: missing selector field",info.module or "")
+      io.stderr:write(string.format("%q: missing selector field",info.module or ""),"\n")
+      info.selector = ""
       info.code = { handler = notfound }
       return
     end
     
     if not info.module then
-      syslog('error',"%s: missing module field",info.path)
+      syslog('error',"%q: missing module field",info.selector or "")
+      io.stderr:write(string.format("%q: missing module field",info.selector or ""),"\n")
       info.code = { handler = notfound }
       return
     end
@@ -104,18 +109,21 @@ local CONF = {} do
     local okay,mod = pcall(require,info.module)
     if not okay then
       syslog('error',"%q %s",info.selector,mod)
+      io.stderr:write(string.format("%q %s",info.selector,mod),"\n")
       info.code = { handler = notfound }
       return
     end
     
     if type(mod) ~= 'table' then
-      syslog('error',"%q module %q not supported",info.selector,info.module)
+      syslog('error',"%q module %s not supported",info.selector,info.module)
+      io.stderr:write(string.format("%q module %s not supported",info.selector,info.module),"\n")
       info.code = { handler = notfound }
       return
     end
     
     if not mod.handler then
       syslog('error',"%q missing %s.handler()",info.selector,info.module)
+      io.stderr:write(string.format("%q missing %s.handler()",info.selector,info.module),"\n")
       mod.handler = notfound
       return
     end
@@ -124,6 +132,7 @@ local CONF = {} do
       okay,err = mod.init(info)
       if not okay then
         syslog('error',"%q %s=%s",info.selector,info.module,err)
+        io.stderr:write(string.format("%q %s=%s",info.selector,info.module,err),"\n")
         mod.handler = notfound
         return
       end
@@ -140,6 +149,7 @@ local CONF = {} do
   for i,info in ipairs(CONF.handlers) do
     if i < #CONF.handlers and info.selector == CONF.handlers[i+1].selector then
       syslog('warning',"duplicate selector %q found",info.selector)
+      io.stderr:write(string.format("duplicate selector %q found",info.selector),"\n")
     end
     loadmodule(info)
   end
