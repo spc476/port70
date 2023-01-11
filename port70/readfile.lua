@@ -162,7 +162,12 @@ return function(filename,ext,info,request,ios)
   
   local mime = mimetype:match(magic(filename))
   
-  if mime.type:match "^text/" then
+  if not mime then
+    syslog('error',"%s: failed to get MIME type",filename)
+    ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector })
+    return false
+    
+  elseif mime.type:match "^text/" then
     local file,err = io.open(filename,"r")
     if not file then
       syslog('error',"io.open(%q) = %s",filename,err)
