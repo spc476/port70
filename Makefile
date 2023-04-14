@@ -64,6 +64,7 @@ clean:
 	$(RM) $(shell find . -name '*.so')
 
 install: all
+	$(INSTALL) -d $(DESTDIR)$(BINDIR)
 	$(INSTALL) -d $(DESTDIR)$(LIBDIR)/port70
 	$(INSTALL) -d $(DESTDIR)$(LUADIR)/port70
 	$(INSTALL) -d $(DESTDIR)$(LUADIR)/port70/handlers
