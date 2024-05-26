@@ -252,6 +252,7 @@ local function main(ios)
     ios:write(".\r\n")
   end
   
+  ios:close()
   syslog(
         'info',
         "remote=%s status=%s request=%q bytes=%d",
@@ -260,7 +261,6 @@ local function main(ios)
         request,
         ios.__wbytes
   )
-  ios:close()
 end
 
 -- ************************************************************************
