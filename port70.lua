@@ -213,6 +213,7 @@ local function main(ios)
         0
     )
     ios:close()
+    return
   end
   
   local selector,search = parserequest:match(request)
