@@ -152,7 +152,9 @@ function handler(info,request,ios)
     local finfo,err1 = fsys.stat(directory)
     
     if not finfo then
-      syslog('error',"stat(%q) = %s",directory,errno[err1])
+      if err1 ~= errno.ENOENT then
+        syslog('error',"stat(%q) = %s",directory,errno[err1])
+      end
       ios:write(mklink { type = 'error' , display = "Selector not found" , selector = request.selector .. request.rest  })
       return false
     end
